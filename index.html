@@ -1,22 +1,106 @@
-      <div class="live">
-        <div>
-          <h2>LIVE VIDEO</h2>
-          <p>Your live stream will appear here.</p>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Live & Points</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+    }
+
+    header {
+      background: #1877f2;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 12px;
+    }
+
+    .player {
+      background: #000;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      border-radius: 10px;
+    }
+
+    .points {
+      text-align: center;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 8px;
+      background: #1877f2;
+      color: white;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>MY LIVE</h1>
+  <p>Live Video & Points</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>🔴 LIVE</h2>
+
+    <div class="player">
+      <div>
+        <h2>LIVE PLAYER</h2>
+        <p>Live stream will appear here.</p>
       </div>
-
     </div>
-
   </div>
 
-  <script>
-    let points = 0;
+  <div class="card">
+    <h2>Your Points</h2>
 
-    function addPoints() {
-      points += 10;
-      document.getElementById("points").textContent = points;
-    }
-  </script>
+    <div class="points" id="points">0</div>
+
+    <button onclick="addPoints()">
+      ⭐ Get 10 Points
+    </button>
+  </div>
+
+</div>
+
+<script>
+  let points = 0;
+
+  function addPoints() {
+    points += 10;
+    document.getElementById("points").textContent = points;
+  }
+</script>
 
 </body>
-</html
+</html>
