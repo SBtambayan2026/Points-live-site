@@ -1,52 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>SB TAMBAYAN LIVE</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body { font-family: Arial; background: #111; color: white; text-align: center; margin:0; padding:0; }
-.header { background: #c00; padding: 20px; }
-.box { background: #222; margin: 15px auto; padding: 20px; border-radius: 15px; max-width: 600px; }
-</style>
-</head>
-<body>
-
-<div class="header">
-<h1>🐓 SB TAMBAYAN LIVE 🐓</h1>
-<p>Official Live Stream</p>
+<!-- VIDEO PLAYER -->
+<div class="fb-video" 
+     data-href="https://www.facebook.com/share/v/19NwMh7ocT/" 
+     data-width="100%" 
+     data-show-captions="false"
+     data-allowfullscreen="true">
 </div>
-
-<div class="box">
-<h2>🔴 LIVE NGAYON</h2>
-<!-- FB PAGE MO NAKA EMBED NA -->
-<iframe src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/share/19VwdEzQR7/&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true" 
-width="100%" height="500" style="border:none;overflow:hidden;border-radius:10px;" scrolling="no" frameborder="0" allowfullscreen="true"></iframe>
-</div>
-
-<div class="box">
-<h2>💬 COMMENTS & REACT</h2>
-<div id="fb-root"></div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0"></script>
-<div class="fb-comments" data-href="https://sbtambayan2026.github.io/Points-live-site/" data-width="100%" data-numposts="5"></div>
-</div>
-
-<div class="box">
-<h2>👤 PLAYER POINTS</h2>
-<input type="text" id="playerName" placeholder="Ilagay mo name mo" style="padding:10px; width:80%; border-radius:8px;">
-<p>Welcome, <b id="nameDisplay">Guest</b> | Points: <b id="points">0</b></p>
-<button onclick="addPoints(10)" style="padding:10px; background:#00aaff; border:none; color:white; border-radius:8px;">+10</button>
-<button onclick="addPoints(50)" style="padding:10px; background:#00aaff; border:none; color:white; border-radius:8px;">+50</button>
-</div>
-
-<script>
-let points = localStorage.getItem('points') || 0;
-let name = localStorage.getItem('playerName') || 'Guest';
-document.getElementById('points').innerText = points;
-document.getElementById('nameDisplay').innerText = name;
-document.getElementById('playerName').value = name;
-function addPoints(num){ points = parseInt(points) + num; localStorage.setItem('points', points); document.getElementById('points').innerText = points; }
-document.getElementById('playerName').onchange = function(){ name = this.value; localStorage.setItem('playerName', name); document.getElementById('nameDisplay').innerText = name; }
-</script>
-
-</body>
-</html>
