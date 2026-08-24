@@ -6,18 +6,13 @@
 <title>SB Tambayan - Points Site</title>
 <style>
   body { font-family: Arial; background: #111; color: white; text-align: center; padding: 20px; }
-  .container { max-width: 500px; margin: auto; background: #222; padding: 20px; border-radius: 15px; box-shadow: 0 0 20px #ffc107; }
+  .container { max-width: 500px; margin: auto; background: #222; padding: 20px; border-radius: 15px; }
   input, button { width: 90%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; font-size: 16px; }
   .btn { background: #28a745; color: white; font-weight: bold; cursor: pointer; }
-  .btn:hover { background: #218838; }
   .btn-red { background: #dc3545; }
-  .btn-red:hover { background: #c82333; }
   .btn-yellow { background: #ffc107; color: black; }
-  .btn-yellow:hover { background: #e0a800; }
   .points { font-size: 35px; color: #ffc107; font-weight: bold; }
   #gameArea { margin-top: 15px; padding: 15px; background: #333; border-radius: 10px; }
-  h1 { color: #ffc107; }
-  hr { border: 1px solid #444; margin: 15px 0; }
 </style>
 </head>
 <body>
@@ -46,55 +41,5 @@
 </div>
 
 <script type="module">
-  // FIREBASE IMPORT
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  // CONFIG MO BOSS
-  const firebaseConfig = {
-    apiKey: "AIzaSyDKOP3TyAeYcP_DlGbeMq9xIk9r_pKkux0",
-    authDomain: "biboy-story-demo.firebaseapp.com",
-    projectId: "biboy-story-demo",
-    storageBucket: "biboy-story-demo.firebasestorage.app",
-    messagingSenderId: "675994722486",
-    appId: "1:675994722486:web:5ba719c8c6b9fa8c1dc617",
-    measurementId: "G-917JHV3ZZW"
-  };
-
-  // INIT FIREBASE
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  let currentUser = null;
-  let userPoints = 0;
-
-  // CHECK KUNG NAKA LOGIN
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      currentUser = user;
-      document.getElementById('authBox').style.display = 'none';
-      document.getElementById('mainBox').style.display = 'block';
-      document.getElementById('userEmail').innerText = user.email;
-      await loadPoints();
-    } else {
-      document.getElementById('authBox').style.display = 'block';
-      document.getElementById('mainBox').style.display = 'none';
-    }
-  });
-
-  // REGISTER
-  window.register = async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    if(!email || !password) { alert("Lagay ka email at password"); return; }
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Registered! Login ka na");
-    } catch(e) { alert(e.message) }
-  }
-
-  // LOGIN
-  window.login = async () => {
-    const email
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAnd
