@@ -1,46 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Electronic Games - Play & Earn Points</title>
-<style>
-body{background:#0f172a;color:white;font-family:Arial;text-align:center;padding:15px}
-h1{color:#38bdf8}
-.box{background:#1e293b;padding:20px;margin:15px auto;border-radius:15px;max-width:420px}
-input,button{padding:10px;margin:5px;border-radius:8px;border:none;font-size:16px}
-button{background:#38bdf8;color:black;font-weight:bold;cursor:pointer}
-button:active{transform:scale(0.95)}
-#points{font-size:24px;color:#facc15;font-weight:bold}
-.hidden{display:none}
-</style>
-</head>
-<body>
-<h1>⚡ ELECTRONIC GAMES ⚡</h1>
-<p>Play games. Earn points. Cashout via GCash</p>
-<p>Points: <span id="points">0</span></p>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElectronicGames</title>
+  <style>
+    body {
+      background: #0f0f1a;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .info-box {
+      background: #1e1e2f;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
 
-<div class="box" id="authBox">
-<h2>Login / Register</h2>
-<input id="email" type="email" placeholder="Email"><br>
-<input id="password" type="password" placeholder="Password"><br>
-<button id="registerBtn">Register</button>
-<button id="loginBtn">Login</button>
-</div>
-
-<div class="box hidden" id="gameBox">
-<h2>1. Clicker Game - +1 point per click</h2>
-<button onclick="addPoints(1)">CLICK ME!</button>
-</div>
-
-<div class="box hidden" id="gameBox2">
-<h2>2. Guess Number 1-10 - +10 points if correct</h2>
-<input id="guessInput" type="number" placeholder="1-10">
-<button onclick="guessGame()">Guess</button>
-<p id="guessResult"></p>
-</div>
-
-<div class="box hidden" id="gameBox3">
-<h2>3. Rock Paper Scissors - +5 points if win</h2>
-<button onclick="rps('rock')">Rock</button>
-<button onclick="rps('paper')">Paper</button>
