@@ -19,14 +19,12 @@
 <div class="container">
   <h1>SB TAMBAYAN 🔥</h1>
   <p>Ipunan ng Points!</p>
-
   <div id="authBox">
     <input type="email" id="email" placeholder="Email mo">
     <input type="password" id="password" placeholder="Password">
     <button class="btn" onclick="register()">Register</button>
     <button class="btn btn-yellow" onclick="login()">Login</button>
   </div>
-
   <div id="mainBox" style="display:none">
     <h3>Welcome, <span id="userEmail"></span></h3>
     <p>Points mo: <span class="points" id="points">0</span></p>
@@ -39,7 +37,74 @@
     <div id="gameArea"></div>
   </div>
 </div>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAnd
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyDKOP3TyAeYcP_DlGbeMq9xIk9r_pKkux0",
+    authDomain: "biboy-story-demo.firebaseapp.com",
+    projectId: "biboy-story-demo",
+    storageBucket: "biboy-story-demo.firebasestorage.app",
+    messagingSenderId: "675994722486",
+    appId: "1:675994722486:web:5ba719c8c6b9fa8c1dc617",
+    measurementId: "G-917JHV3ZZW"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let currentUser = null;
+  let userPoints = 0;
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      document.getElementById('authBox').style.display = 'none';
+      document.getElementById('mainBox').style.display = 'block';
+      document.getElementById('userEmail').innerText = user.email;
+      await loadPoints();
+    } else {
+      document.getElementById('authBox').style.display = 'block';
+      document.getElementById('mainBox').style.display = 'none';
+    }
+  });
+  window.register = async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try { await createUserWithEmailAndPassword(auth, email, password); alert("Registered! Login ka na"); } catch(e) { alert("Error: " + e.message) }
+  }
+  window.login = async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try { await signInWithEmailAndPassword(auth, email, password); } catch(e) { alert("Error: " + e.message) }
+  }
+  window.logout = () => { signOut(auth); }
+  async function loadPoints() {
+    const ref = doc(db, "users", currentUser.uid);
+    const snap = await getDoc(ref);
+    if(snap.exists()) { userPoints = snap.data().points; }
+    document.getElementById('points').innerText = userPoints;
+  }
+  async function savePoints() {
+    await setDoc(doc(db, "users", currentUser.uid), { points: userPoints });
+  }
+  window.playQuiz = () => {
+    document.getElementById('gameArea').innerHTML = '<h4>Anong kulay ng langit?</h4><button class="btn" onclick="checkQuiz(\'Blue\')">Blue</button><button class="btn" onclick="checkQuiz(\'Red\')">Red</button>';
+  }
+  window.checkQuiz = (ans) => {
+    if(ans === 'Blue') { userPoints += 10; savePoints(); document.getElementById('points').innerText = userPoints; document.getElementById('gameArea').innerHTML = "TAMA! +10 Points 🎉"; } else { document.getElementById('gameArea').innerHTML = "Mali! Try ulit"; }
+  }
+  window.playClicker = () => {
+    userPoints += 1; savePoints(); document.getElementById('points').innerText = userPoints; document.getElementById('gameArea').innerHTML = 'Na click mo! +1 pt<br>Points: ' + userPoints;
+  }
+  window.playColorGame = () => {
+    const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    document.getElementById('gameArea').innerHTML = '<h3>Click ang: <span style="color:' + randomColor.toLowerCase() + '">' + randomColor + '</span></h3><button class="btn" style="background:red" onclick="checkColor(\'RED\')">RED</button><button class="btn" style="background:blue" onclick="checkColor(\'BLUE\')">BLUE</button><button class="btn" style="background:green" onclick="checkColor(\'GREEN\')">GREEN</button><button class="btn" style="background:yellow; color:black" onclick="checkColor(\'YELLOW\')">YELLOW</button>';
+    window.currentColor = randomColor;
+  }
+  window.checkColor = (clicked) => {
+    if(clicked === window.currentColor){ userPoints += 5; savePoints(); document.getElementById('points').innerText = userPoints; document.getElementById('gameArea').innerHTML = "TAMA! +5 Points 🎉 <br><button class='btn' onclick='playColorGame()'>Next</button>"; } else { document.getElementById('gameArea').innerHTML = "Mali! Try ulit <br><button class='btn' onclick='playColorGame()'>Next</button>"; }
+  }
+</script>
+</body>
+</html>
