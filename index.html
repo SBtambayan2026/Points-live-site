@@ -1,55 +1,31 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ElectronicGames</title>
+  <title>Boss Arcade - Play & Earn</title>
   <style>
-    body {
-      background: #0f0f1a;
-      color: white;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-    .info-box {
-      background: #1e1e2f;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-      margin: 20px auto;
-    }
-    .btn {
-      width: 100%;
-      max-width: 400px;
-      padding: 12px;
-      margin: 8px auto;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      display: block;
-      color: white;
-    }
-    .btn-blue { background: #2563eb; }
-    .btn-green { background: #16a34a; }
-    .btn-pink { background: #e1306c; }
-    .btn-black { background: #000; }
-    .btn-whatsapp { background: #25D366; }
-    
-    #auth-box {
-      background: #1e1e2f;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 400px;
-      margin: 20px auto;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: none;
-      box-sizing:
+    body { background: #0f0f1a; color: white; font-family: Arial; margin: 0; padding: 20px; text-align: center; }
+    .box { background: #1e1e2f; padding: 20px; border-radius: 10px; max-width: 500px; margin: 20px auto; }
+    .btn { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; }
+    .btn-blue { background: #2563eb; } .btn-green { background: #16a34a; } .btn-yellow { background: #f59e0b; }
+    input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; box-sizing: border-box; }
+    .points { font-size: 24px; color: #fbbf24; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>🎮 BOSS ARCADE 🎮</h1>
+  <p>Test: Pag lumabas to ibig sabihin LIVE NA!</p>
+
+  <!-- LOGIN BOX -->
+  <div id="login-box" class="box">
+    <h2>Login / Register</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button class="btn btn-blue" onclick="alert('Gagana to pag connect na Firebase')">Mag Register</button>
+    <button class="btn btn-green" onclick="alert('Gagana to pag connect na Firebase')">Login</button>
+  </div>
+
+</body>
+</html>
