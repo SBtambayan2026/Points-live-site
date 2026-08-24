@@ -11,16 +11,11 @@
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f4f7fb;
+  background:#f3f6fb;
   color:#172033;
 }
 
-header{
-  background:#1266f1;
-  color:white;
-  padding:25px 20px;
-  border-radius:0 0 28px 28px;
-}
+.hidden{display:none!important}
 
 .container{
   width:92%;
@@ -28,14 +23,70 @@ header{
   margin:auto;
 }
 
+.auth{
+  padding-top:50px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:18px;
+  margin-bottom:15px;
+  box-shadow:0 4px 15px #0001;
+}
+
+h1,h2,h3{margin-top:0}
+
+input{
+  width:100%;
+  padding:14px;
+  margin:7px 0 12px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:16px;
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:14px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.primary{
+  background:#1266f1;
+  color:white;
+  width:100%;
+}
+
+.secondary{
+  background:#eef3ff;
+  color:#1266f1;
+  width:100%;
+  margin-top:8px;
+}
+
+header{
+  background:#1266f1;
+  color:white;
+  padding:24px 0;
+  border-radius:0 0 28px 28px;
+}
+
 .logo{
   font-size:24px;
   font-weight:bold;
-  margin-bottom:20px;
+}
+
+.user{
+  margin-top:18px;
+  opacity:.9;
 }
 
 .balance{
-  font-size:36px;
+  font-size:38px;
   font-weight:bold;
   margin-top:5px;
 }
@@ -47,45 +98,9 @@ header{
   margin:20px 0;
 }
 
-button{
-  border:0;
-  border-radius:14px;
-  padding:16px;
-  font-size:15px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
 .action{
   background:white;
   box-shadow:0 3px 12px #0001;
-}
-
-.primary{
-  background:#1266f1;
-  color:white;
-  width:100%;
-}
-
-.card{
-  background:white;
-  padding:20px;
-  border-radius:18px;
-  margin-bottom:15px;
-  box-shadow:0 3px 12px #0001;
-}
-
-input{
-  width:100%;
-  padding:14px;
-  margin:7px 0 12px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  font-size:16px;
-}
-
-.hidden{
-  display:none;
 }
 
 .transaction{
@@ -93,46 +108,81 @@ input{
   border-bottom:1px solid #eee;
 }
 
-.plus{
-  color:#159447;
-}
-
-.minus{
-  color:#d93025;
-}
+.plus{color:#159447}
+.minus{color:#d93025}
 
 .small{
   color:#777;
   font-size:13px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logout{
+  background:#ffffff22;
+  color:white;
+  padding:9px 12px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- REGISTER / LOGIN -->
 
-<div id="login" class="container" style="padding-top:70px">
+<div id="authPage" class="container auth">
 
-<div class="card">
+  <div class="card" id="loginBox">
 
-<h1>⭐ PointWallet</h1>
+    <h1>⭐ PointWallet</h1>
+    <p>Login to your account</p>
 
-<p>Points wallet prototype</p>
+    <input id="loginUsername"
+           placeholder="Username">
 
-<input id="username"
-placeholder="Username">
+    <input id="loginPassword"
+           type="password"
+           placeholder="Password">
 
-<input id="password"
-type="password"
-placeholder="Password">
+    <button class="primary"
+            onclick="loginUser()">
+      LOGIN
+    </button>
 
-<button class="primary"
-onclick="loginUser()">
-LOGIN
-</button>
+    <button class="secondary"
+            onclick="showRegister()">
+      CREATE ACCOUNT
+    </button>
 
-</div>
+  </div>
+
+
+  <div class="card hidden" id="registerBox">
+
+    <h1>Create Account</h1>
+
+    <input id="regUsername"
+           placeholder="Choose username">
+
+    <input id="regPassword"
+           type="password"
+           placeholder="Choose password">
+
+    <button class="primary"
+            onclick="registerUser()">
+      REGISTER
+    </button>
+
+    <button class="secondary"
+            onclick="showLogin()">
+      BACK TO LOGIN
+    </button>
+
+  </div>
 
 </div>
 
@@ -145,16 +195,30 @@ LOGIN
 
 <div class="container">
 
+<div class="topbar">
+
 <div class="logo">
 ⭐ PointWallet
 </div>
 
-<div>
+<button class="logout"
+        onclick="logout()">
+Logout
+</button>
+
+</div>
+
+<div class="user">
+Hello, <b id="currentUser"></b>
+</div>
+
+<div class="small"
+     style="color:white;margin-top:18px">
 Available Points
 </div>
 
 <div class="balance"
-id="balance">
+     id="balance">
 0
 </div>
 
@@ -168,22 +232,22 @@ id="balance">
 <div class="actions">
 
 <button class="action"
-onclick="openBox('send')">
+        onclick="openBox('sendBox')">
 📤 Send Points
 </button>
 
 <button class="action"
-onclick="openBox('receive')">
+        onclick="openBox('receiveBox')">
 📥 Receive
 </button>
 
 <button class="action"
-onclick="openBox('withdraw')">
+        onclick="openBox('withdrawBox')">
 💸 Withdraw
 </button>
 
 <button class="action"
-onclick="openBox('history')">
+        onclick="openBox('historyBox')">
 📋 History
 </button>
 
@@ -192,20 +256,21 @@ onclick="openBox('history')">
 
 <!-- SEND -->
 
-<div id="send"
-class="card hidden">
+<div id="sendBox"
+     class="card hidden">
 
 <h3>📤 Send Points</h3>
 
 <input id="receiver"
-placeholder="Receiver username">
+       placeholder="Receiver username">
 
 <input id="sendAmount"
-type="number"
-placeholder="Points">
+       type="number"
+       min="1"
+       placeholder="Points">
 
 <button class="primary"
-onclick="sendPoints()">
+        onclick="sendPoints()">
 SEND POINTS
 </button>
 
@@ -214,21 +279,18 @@ SEND POINTS
 
 <!-- RECEIVE -->
 
-<div id="receive"
-class="card hidden">
+<div id="receiveBox"
+     class="card hidden">
 
 <h3>📥 Receive Points</h3>
 
-<p>
-Your username:
-</p>
+<p>Your username:</p>
 
-<b id="myUsername">
-</b>
+<h2 id="receiveUsername"></h2>
 
 <p class="small">
-Give your username to another PointWallet user
-to receive points.
+Another PointWallet user can use this username
+to send you points.
 </p>
 
 </div>
@@ -236,28 +298,30 @@ to receive points.
 
 <!-- WITHDRAW -->
 
-<div id="withdraw"
-class="card hidden">
+<div id="withdrawBox"
+     class="card hidden">
 
-<h3>💸 Withdraw Request</h3>
+<h3>💸 Withdrawal Request</h3>
 
 <p class="small">
-Demo only. This does not send real money.
+Demo only. This creates a pending request;
+it does not transfer real money.
 </p>
 
 <input id="withdrawAmount"
-type="number"
-placeholder="Points">
+       type="number"
+       min="1"
+       placeholder="Points">
 
-<input id="gcashName"
-placeholder="GCash account name">
+<input id="withdrawName"
+       placeholder="Account name">
 
-<input id="gcashNumber"
-placeholder="GCash mobile number">
+<input id="withdrawNumber"
+       placeholder="GCash/mobile number">
 
 <button class="primary"
-onclick="withdrawRequest()">
-REQUEST WITHDRAWAL
+        onclick="requestWithdraw()">
+SUBMIT REQUEST
 </button>
 
 </div>
@@ -265,13 +329,12 @@ REQUEST WITHDRAWAL
 
 <!-- HISTORY -->
 
-<div id="history"
-class="card hidden">
+<div id="historyBox"
+     class="card hidden">
 
 <h3>📋 Transaction History</h3>
 
 <div id="transactions">
-No transactions yet.
 </div>
 
 </div>
@@ -283,39 +346,176 @@ No transactions yet.
 
 <script>
 
-let points = 1000;
+const STORAGE_KEY = "pointwallet_users_v1";
+const SESSION_KEY = "pointwallet_session_v1";
 
-let username = "";
+let users = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) || "{}"
+);
+
+let currentUser = null;
+
+
+/* SAVE USERS */
+
+function saveUsers(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(users)
+  );
+
+}
+
+
+/* REGISTER */
+
+function registerUser(){
+
+  let username =
+    document.getElementById("regUsername")
+    .value.trim();
+
+  let password =
+    document.getElementById("regPassword")
+    .value;
+
+  if(username.length < 3){
+
+    alert("Username must be at least 3 characters.");
+
+    return;
+
+  }
+
+  if(password.length < 4){
+
+    alert("Password must be at least 4 characters.");
+
+    return;
+
+  }
+
+  let key = username.toLowerCase();
+
+  if(users[key]){
+
+    alert("Username already exists.");
+
+    return;
+
+  }
+
+  users[key] = {
+
+    username: username,
+
+    password: password,
+
+    points: 1000,
+
+    transactions: []
+
+  };
+
+  saveUsers();
+
+  alert(
+    "Account created! You received 1,000 demo points."
+  );
+
+  document.getElementById("loginUsername")
+    .value = username;
+
+  showLogin();
+
+}
 
 
 /* LOGIN */
 
 function loginUser(){
 
-username =
-document.getElementById("username").value.trim();
+  let username =
+    document.getElementById("loginUsername")
+    .value.trim();
 
-let password =
-document.getElementById("password").value;
+  let password =
+    document.getElementById("loginPassword")
+    .value;
 
-if(username === "" || password === ""){
+  let key = username.toLowerCase();
 
-alert("Please enter username and password.");
+  if(!users[key]){
 
-return;
+    alert("Account not found.");
+
+    return;
+
+  }
+
+  if(users[key].password !== password){
+
+    alert("Incorrect password.");
+
+    return;
+
+  }
+
+  currentUser = key;
+
+  localStorage.setItem(
+    SESSION_KEY,
+    currentUser
+  );
+
+  showApp();
 
 }
 
-document.getElementById("login")
-.classList.add("hidden");
 
-document.getElementById("app")
-.classList.remove("hidden");
+/* SHOW APP */
 
-document.getElementById("myUsername")
-.innerText = username;
+function showApp(){
 
-updateBalance();
+  if(!currentUser || !users[currentUser]){
+    return;
+  }
+
+  document.getElementById("authPage")
+    .classList.add("hidden");
+
+  document.getElementById("app")
+    .classList.remove("hidden");
+
+  document.getElementById("currentUser")
+    .innerText =
+    users[currentUser].username;
+
+  document.getElementById("receiveUsername")
+    .innerText =
+    users[currentUser].username;
+
+  updateBalance();
+
+  renderHistory();
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+  currentUser = null;
+
+  localStorage.removeItem(SESSION_KEY);
+
+  document.getElementById("app")
+    .classList.add("hidden");
+
+  document.getElementById("authPage")
+    .classList.remove("hidden");
 
 }
 
@@ -324,9 +524,12 @@ updateBalance();
 
 function updateBalance(){
 
-document.getElementById("balance")
-.innerText =
-points.toLocaleString();
+  let points =
+    users[currentUser].points;
+
+  document.getElementById("balance")
+    .innerText =
+    points.toLocaleString();
 
 }
 
@@ -335,170 +538,307 @@ points.toLocaleString();
 
 function openBox(id){
 
-document
-.getElementById(id)
-.classList.toggle("hidden");
+  document.getElementById(id)
+    .classList.toggle("hidden");
 
 }
 
 
-/* SEND */
+/* SEND POINTS */
 
 function sendPoints(){
 
-let receiver =
-document.getElementById("receiver")
-.value.trim();
+  let receiver =
+    document.getElementById("receiver")
+    .value.trim();
 
-let amount =
-Number(
-document.getElementById("sendAmount")
-.value
-);
+  let amount =
+    Number(
+      document.getElementById("sendAmount")
+      .value
+    );
 
-if(receiver === "" || amount <= 0){
+  let receiverKey =
+    receiver.toLowerCase();
 
-alert("Enter receiver and amount.");
+  if(!users[receiverKey]){
 
-return;
+    alert("Receiver account not found.");
 
-}
+    return;
 
-if(amount > points){
+  }
 
-alert("Not enough points.");
+  if(receiverKey === currentUser){
 
-return;
+    alert("You cannot send points to yourself.");
 
-}
+    return;
 
-if(receiver === username){
+  }
 
-alert("You cannot send points to yourself.");
+  if(!Number.isInteger(amount) || amount <= 0){
 
-return;
+    alert("Enter a valid whole number of points.");
 
-}
+    return;
 
-points -= amount;
+  }
 
-updateBalance();
+  if(amount > users[currentUser].points){
 
-addTransaction(
-"Sent to " + receiver,
-amount,
-"minus"
-);
+    alert("Insufficient points.");
 
-alert(
-amount.toLocaleString() +
-" points sent successfully!"
-);
+    return;
+
+  }
+
+
+  users[currentUser].points -= amount;
+
+  users[receiverKey].points += amount;
+
+
+  users[currentUser].transactions.unshift({
+
+    type:"sent",
+
+    title:
+      "Sent to " +
+      users[receiverKey].username,
+
+    amount:amount,
+
+    time:new Date().toLocaleString()
+
+  });
+
+
+  users[receiverKey].transactions.unshift({
+
+    type:"received",
+
+    title:
+      "Received from " +
+      users[currentUser].username,
+
+    amount:amount,
+
+    time:new Date().toLocaleString()
+
+  });
+
+
+  saveUsers();
+
+  updateBalance();
+
+  renderHistory();
+
+  document.getElementById("receiver").value="";
+  document.getElementById("sendAmount").value="";
+
+  alert("Points sent successfully!");
 
 }
 
 
 /* WITHDRAW REQUEST */
 
-function withdrawRequest(){
+function requestWithdraw(){
 
-let amount =
-Number(
-document.getElementById("withdrawAmount")
-.value
-);
+  let amount =
+    Number(
+      document.getElementById("withdrawAmount")
+      .value
+    );
 
-let name =
-document.getElementById("gcashName")
-.value.trim();
+  let name =
+    document.getElementById("withdrawName")
+    .value.trim();
 
-let number =
-document.getElementById("gcashNumber")
-.value.trim();
-
-if(amount <= 0 ||
-name === "" ||
-number === ""){
-
-alert("Complete all information.");
-
-return;
-
-}
-
-if(amount > points){
-
-alert("Not enough points.");
-
-return;
-
-}
-
-points -= amount;
-
-updateBalance();
-
-addTransaction(
-"Withdrawal request to GCash ending " +
-number.slice(-4),
-amount,
-"minus"
-);
-
-alert(
-"Withdrawal request submitted for admin review."
-);
-
-}
+  let number =
+    document.getElementById("withdrawNumber")
+    .value.trim();
 
 
-/* TRANSACTIONS */
+  if(!Number.isInteger(amount) || amount <= 0){
 
-function addTransaction(
-title,
-amount,
-type
-){
+    alert("Enter a valid amount.");
 
-let box =
-document.getElementById("transactions");
+    return;
 
-if(box.innerText ===
-"No transactions yet."){
+  }
 
-box.innerHTML = "";
+  if(amount > users[currentUser].points){
+
+    alert("Insufficient points.");
+
+    return;
+
+  }
+
+  if(name === "" || number === ""){
+
+    alert("Complete the withdrawal information.");
+
+    return;
+
+  }
+
+
+  users[currentUser].transactions.unshift({
+
+    type:"pending",
+
+    title:"Withdrawal request",
+
+    amount:amount,
+
+    time:new Date().toLocaleString(),
+
+    status:"Pending admin review"
+
+  });
+
+
+  saveUsers();
+
+  renderHistory();
+
+
+  alert(
+    "Withdrawal request submitted as PENDING."
+  );
 
 }
 
-let item =
-document.createElement("div");
 
-item.className =
-"transaction";
+/* HISTORY */
 
-item.innerHTML =
+function renderHistory(){
 
-"<b>" + title + "</b>" +
+  let box =
+    document.getElementById("transactions");
 
-"<br>" +
+  let list =
+    users[currentUser].transactions;
 
-"<span class='" + type + "'>" +
 
-(type === "plus" ? "+" : "-") +
+  if(list.length === 0){
 
-amount.toLocaleString() +
+    box.innerHTML =
+      "<p class='small'>No transactions yet.</p>";
 
-" points</span>" +
+    return;
 
-"<br>" +
+  }
 
-"<span class='small'>" +
 
-new Date().toLocaleString() +
+  box.innerHTML = "";
 
-"</span>";
 
-box.prepend(item);
+  list.forEach(function(tx){
+
+    let div =
+      document.createElement("div");
+
+    div.className =
+      "transaction";
+
+
+    let symbol = "";
+
+    let className = "";
+
+
+    if(tx.type === "received"){
+
+      symbol = "+";
+      className = "plus";
+
+    }else{
+
+      symbol = "-";
+      className = "minus";
+
+    }
+
+
+    let status =
+      tx.status
+      ? "<br><span class='small'>" +
+        tx.status +
+        "</span>"
+      : "";
+
+
+    div.innerHTML =
+
+      "<b>" +
+      tx.title +
+      "</b>" +
+
+      "<br>" +
+
+      "<span class='" +
+      className +
+      "'>" +
+
+      symbol +
+      tx.amount.toLocaleString() +
+      " points</span>" +
+
+      "<br>" +
+
+      "<span class='small'>" +
+      tx.time +
+      "</span>" +
+
+      status;
+
+
+    box.appendChild(div);
+
+  });
+
+}
+
+
+/* SWITCH AUTH BOXES */
+
+function showRegister(){
+
+  document.getElementById("loginBox")
+    .classList.add("hidden");
+
+  document.getElementById("registerBox")
+    .classList.remove("hidden");
+
+}
+
+
+function showLogin(){
+
+  document.getElementById("registerBox")
+    .classList.add("hidden");
+
+  document.getElementById("loginBox")
+    .classList.remove("hidden");
+
+}
+
+
+/* AUTO LOGIN */
+
+let savedSession =
+  localStorage.getItem(SESSION_KEY);
+
+if(savedSession && users[savedSession]){
+
+  currentUser = savedSession;
+
+  showApp();
 
 }
 
