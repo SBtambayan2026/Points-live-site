@@ -1,116 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>JAYLORD S. ANGCON BUSINESS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{background:#000;color:#fff;font-family:Arial;margin:0;padding:0;text-align:center}
-.login-box{background:#262626;width:90%;max-width:400px;margin:50px auto;padding:30px;border-radius:12px}
-input,select{width:90%;padding:12px;margin:10px 0;border:none;border-radius:8px;background:#333;color:#fff;font-size:16px}
-.btn{background:#ffb700;color:#000;border:none;width:95%;padding:14px;border-radius:10px;font-weight:bold;cursor:pointer;margin:5px 0;font-size:16px}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0a0a0a}
-.username{color:#ffb700;font-weight:bold}
-.card{background:#262626;margin:15px;padding:20px;border-radius:12px}
-img{max-width:100%;border-radius:12px}
-#customerDash,#agentDash{display:none}
-</style>
-</head>
-<body>
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
-<!-- LOGIN PAGE -->
-<div id="loginPage" class="login-box">
-  <h2>🏪 JAYLORD S. ANGCON BUSINESS</h2>
-  <p style="color:gray;font-size:12px">Gamit ka ng EMAIL: test@gmail.com</p>
-  <input type="email" id="email" placeholder="Email: test@gmail.com">
-  <input type="password" id="pass" placeholder="Password: 123456">
-  <select id="accType">
-    <option value="customer">Customer Account</option>
-    <option value="agent">Agent/Admin Account</option>
-  </select>
-  <button class="btn" onclick="register()">REGISTER</button>
-  <button class="btn" onclick="login()">LOGIN</button>
-</div>
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDKOP3TyAeYcP_DlGbeMq9xIk9r_pKkux0",
+  authDomain: "biboy-story-demo.firebaseapp.com",
+  projectId: "biboy-story-demo",
+  storageBucket: "biboy-story-demo.firebasestorage.app",
+  messagingSenderId: "675994722486",
+  appId: "1:675994722486:web:5ba719c8c6b9fa8c1dc617"
+};
 
-<!-- CUSTOMER DASHBOARD -->
-<div id="customerDash">
-  <div class="topbar">
-    <span>Customer Portal</span>
-    <span class="username" id="custName"></span>
-    <button onclick="logout()" style="background:red;color:#fff;border:none;padding:8px;border-radius:5px">Logout</button>
-  </div>
-  <img src="SABONGTAMBAYAN.jpg">
-  <div class="card">
-    <h3>Welcome Customer!</h3>
-    <p>Balance: ₱0.00</p>
-  </div>
-</div>
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-<!-- AGENT DASHBOARD -->
-<div id="agentDash">
-  <div class="topbar">
-    <span>Admin Portal</span>
-    <span class="username" id="agentName"></span>
-    <button onclick="logout()" style="background:red;color:#fff;border:none;padding:8px;border-radius:5px">Logout</button>
-  </div>
-  <img src="SABONGTAMBAYAN.jpg">
-  <div class="card">
-    <h3>Welcome Admin!</h3>
-  </div>
-</div>
+// REGISTER FUNCTION
+document.getElementById("registerBtn").addEventListener("click", () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      alert("Registered successfully!");
+      window.location.href = "story.html";
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+});
 
-  // STEP 1: PALITAN MO TO NG GALING FIREBASE MO
-  const firebaseConfig = {
-    apiKey: "PASTE_MO_DITO",
-    authDomain: "PASTE_MO_DITO",
-    projectId: "PASTE_MO_DITO",
-    storageBucket: "PASTE_MO_DITO",
-    messagingSenderId: "PASTE_MO_DITO",
-    appId: "PASTE_MO_DITO"
-  };
+// LOGIN FUNCTION
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
-  const db = getFirestore();
-
-  window.register = async function(){
-    let email = document.getElementById('email').value;
-    let pass = document.getElementById('pass').value;
-    let type = document.getElementById('accType').value;
-    try{
-      let userCred = await createUserWithEmailAndPassword(auth, email, pass);
-      await setDoc(doc(db, "users", userCred.user.uid), {email: email, type: type});
-      alert('Registered na boss!');
-    }catch(e){ alert('ERROR: ' + e.message) }
-  }
-
-  window.login = async function(){
-    let email = document.getElementById('email').value;
-    let pass = document.getElementById('pass').value;
-    try{ await signInWithEmailAndPassword(auth, email, pass); }
-    catch(e){ alert('ERROR: ' + e.message) }
-  }
-
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      let docSnap = await getDoc(doc(db, "users", user.uid));
-      let data = docSnap.data();
-      document.getElementById('loginPage').style.display = 'none';
-      if(data.type == 'agent'){
-        document.getElementById('agentDash').style.display = 'block';
-        document.getElementById('agentName').innerText = data.email;
-      } else {
-        document.getElementById('customerDash').style.display = 'block';
-        document.getElementById('custName').innerText = data.email;
-      }
-    }
-  });
-
-  window.logout = function(){ signOut(auth); location.reload(); }
-</script>
-</body>
-</html>
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      alert("Login successful!");
+      window.location.href = "story.html";
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+});
