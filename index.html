@@ -1,52 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Boss Arcade - Play & Earn</title>
+<title>SB Tambayan - Points Site</title>
 <style>
-  body { background: #0f0f1a; color: white; font-family: Arial; margin: 0; padding: 20px; text-align: center; }
-  .box { background: #1e1e2f; padding: 20px; border-radius: 10px; max-width: 500px; margin: 20px auto; }
-  .btn { width: 100%; padding: 12px; margin: 6px 0; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-  .btn-blue { background: #2563eb; color: white; }
-  .btn-green { background: #16a34a; color: white; }
-  .btn-yellow { background: #f59e0b; color: black; }
-  .btn-red { background: #dc2626; color: white; }
-  input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; box-sizing: border-box; }
-  .game { display: none; }
-  .points { font-size: 24px; color: #fbbf24; font-weight: bold; }
-  #gameArea { width: 100%; height: 200px; background: #000; margin: 10px 0; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  body { font-family: Arial; background: #111; color: white; text-align: center; padding: 20px; }
+  .container { max-width: 500px; margin: auto; background: #222; padding: 20px; border-radius: 15px; }
+  input, button { width: 90%; padding: 10px; margin: 5px; border-radius: 8px; border: none; }
+  .btn { background: #28a745; color: white; font-weight: bold; cursor: pointer; }
+  .btn-red { background: #dc3545; }
+  .btn-yellow { background: #ffc107; color: black; }
+  .points { font-size: 30px; color: #ffc107; }
+  #gameArea { margin-top: 15px; }
 </style>
 </head>
 <body>
+<div class="container">
+  <h1>SB TAMBAYAN 🔥</h1>
+  <p>Ipunan ng Points!</p>
 
-<h1>🎮 BOSS ARCADE 🎮</h1>
-<p>Ipon Points = Kikita ka sa Ads!</p>
+  <div id="authBox">
+    <input type="email" id="email" placeholder="Email mo">
+    <input type="password" id="password" placeholder="Password">
+    <button class="btn" onclick="register()">Register</button>
+    <button class="btn btn-yellow" onclick="login()">Login</button>
+  </div>
 
-<!-- LOGIN BOX -->
-<div id="login-box" class="box">
-  <h2>Login / Register</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button class="btn btn-blue" onclick="register()">Mag Register</button>
-  <button class="btn btn-green" onclick="login()">Login</button>
-  <p id="auth-msg"></p>
-</div>
-
-<!-- ARCADE BOX -->
-<div id="arcade-box" class="box" style="display:none;">
-  <h2>Welcome Boss! <button class="btn btn-red" style="width:auto; padding:5px 10px;" onclick="logout()">Logout</button></h2>
-  <p>Your Points: <span class="points" id="points">0</span></p>
-
-  <h3>Pili ng Laro:</h3>
-  <button class="btn btn-yellow" onclick="playQuiz()">1. Quiz Game +10 pts</button>
-  <button class="btn btn-yellow" onclick="playClicker()">2. Clicker Game +1 pt</button>
-
-  <div id="gameArea">Pumili ka ng laro boss!</div>
-  
-  <!-- DITO LALABAS YUNG ADS LATER -->
-  <div style="margin-top:20px; padding:10px; background:#333; border-radius:8px;">
-    <p>Ads dito para kumita</p>
+  <div id="mainBox" style="display:none">
+    <h3>Welcome, <span id="userEmail"></span></h3>
+    <p>Points mo: <span class="points" id="points">0</span></p>
+    <button class="btn btn-red" onclick="logout()">Logout</button>
+    <hr>
+    <h3>MGA LARO</h3>
+    <button class="btn" onclick="playQuiz()">1. Quiz Game +10 pts</button>
+    <button class="btn btn-yellow" onclick="playClicker()">2. Clicker Game +1 pt</button>
+    <button class="btn btn-yellow" onclick="playColorGame()">3. Color Game +5 pts</button>
+    <div id="gameArea"></div>
   </div>
 </div>
 
@@ -55,14 +45,15 @@
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // CONFIG MO TO BOSS - ITO GAMITIN MO
+  // CONFIG MO TO BOSS - GALING SA FIREBASE MO
   const firebaseConfig = {
-    apiKey: "AIzaSyB5xK7Q9mL2pR8wN4tY1zA3cD6eF0gH1jK",
-    authDomain: "sbtambayan-2026.firebaseapp.com",
-    projectId: "sbtambayan-2026",
-    storageBucket: "sbtambayan-2026.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdef1234567890"
+    apiKey: "AIzaSyDKOP3TyAeYcP_DlGbeMq9xIk9r_pKkux0",
+    authDomain: "biboy-story-demo.firebaseapp.com",
+    projectId: "biboy-story-demo",
+    storageBucket: "biboy-story-demo.firebasestorage.app",
+    messagingSenderId: "675994722486",
+    appId: "1:675994722486:web:5ba719c8c6b9fa8c1dc617",
+    measurementId: "G-917JHV3ZZW"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -72,77 +63,98 @@
   let currentUser = null;
   let userPoints = 0;
 
-  // SAVE POINTS SA FIREBASE
-  async function savePoints() {
-    if(currentUser) {
-      await setDoc(doc(db, "users", currentUser.uid), { points: userPoints });
+  // AUTO LOGIN CHECK
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      document.getElementById('authBox').style.display = 'none';
+      document.getElementById('mainBox').style.display = 'block';
+      document.getElementById('userEmail').innerText = user.email;
+      await loadPoints();
+    } else {
+      document.getElementById('authBox').style.display = 'block';
+      document.getElementById('mainBox').style.display = 'none';
     }
-  }
-
-  // LOAD POINTS GALING FIREBASE
-  async function loadPoints(uid) {
-    const docSnap = await getDoc(doc(db, "users", uid));
-    if (docSnap.exists()) {
-      userPoints = docSnap.data().points;
-    }
-    document.getElementById('points').innerText = userPoints;
-  }
+  });
 
   // REGISTER
-  window.register = async function() {
+  window.register = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      document.getElementById('auth-msg').innerText = "Register Success!";
-    } catch (e) { document.getElementById('auth-msg').innerText = e.message; }
+      alert("Registered! Login ka na");
+    } catch(e) { alert(e.message) }
   }
 
   // LOGIN
-  window.login = async function() {
+  window.login = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      document.getElementById('auth-msg').innerText = "Login Success!";
-    } catch (e) { document.getElementById('auth-msg').innerText = e.message; }
+    } catch(e) { alert(e.message) }
   }
 
   // LOGOUT
   window.logout = () => signOut(auth);
 
-  // GAMES
+  // LOAD POINTS
+  async function loadPoints() {
+    const ref = doc(db, "users", currentUser.uid);
+    const snap = await getDoc(ref);
+    if(snap.exists()) { userPoints = snap.data().points; }
+    document.getElementById('points').innerText = userPoints;
+  }
+
+  // SAVE POINTS
+  async function savePoints() {
+    await setDoc(doc(db, "users", currentUser.uid), { points: userPoints });
+  }
+
+  // QUIZ GAME
   window.playQuiz = () => {
-    userPoints += 10;
-    document.getElementById('points').innerText = userPoints;
-    document.getElementById('gameArea').innerHTML = "Tama! +10 Points 🎉";
-    savePoints();
+    document.getElementById('gameArea').innerHTML = `
+      <h4>Anong kulay ng langit?</h4>
+      <button class="btn" onclick="checkQuiz('Blue')">Blue</button>
+      <button class="btn" onclick="checkQuiz('Red')">Red</button>
+    `;
   }
-  window.playClicker = () => {
-    document.getElementById('gameArea').innerHTML = `Click mo ko! <br><span class="points" id="clickPoints">${userPoints}</span><br><button class="btn btn-blue" onclick="addClick()">CLICK!</button>`;
-  }
-  window.addClick = () => {
-    userPoints += 1;
-    document.getElementById('points').innerText = userPoints;
-    document.getElementById('clickPoints').innerText = userPoints;
-    savePoints();
-  }
-
-  // CHECK KUNG NAKA LOGIN
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      currentUser = user;
-      loadPoints(user.uid); // ILOAD YUNG LUMA NA POINTS
-      document.getElementById('login-box').style.display = 'none';
-      document.getElementById('arcade-box').style.display = 'block';
+  window.checkQuiz = (ans) => {
+    if(ans === 'Blue') {
+      userPoints += 10; savePoints();
+      document.getElementById('points').innerText = userPoints;
+      document.getElementById('gameArea').innerHTML = "TAMA! +10 Points 🎉";
     } else {
-      currentUser = null;
-      userPoints = 0;
-      document.getElementById('login-box').style.display = 'block';
-      document.getElementById('arcade-box').style.display = 'none';
+      document.getElementById('gameArea').innerHTML = "Mali! Try ulit";
     }
-  });
-</script>
+  }
 
-</body>
-</html>
+  // CLICKER GAME
+  window.playClicker = () => {
+    userPoints += 1; savePoints();
+    document.getElementById('points').innerText = userPoints;
+    document.getElementById('gameArea').innerHTML = `Na click mo! +1 pt<br>Points: ${userPoints}`;
+  }
+
+  // COLOR GAME PARA SA BATA
+  window.playColorGame = () => {
+    const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    document.getElementById('gameArea').innerHTML = `
+      <h3>Click ang: <span style="color:${randomColor.toLowerCase()}">${randomColor}</span></h3>
+      <button class="btn" style="background:red" onclick="checkColor('RED')">RED</button>
+      <button class="btn" style="background:blue" onclick="checkColor('BLUE')">BLUE</button>
+      <button class="btn" style="background:green" onclick="checkColor('GREEN')">GREEN</button>
+      <button class="btn" style="background:yellow; color:black" onclick="checkColor('YELLOW')">YELLOW</button>
+    `;
+    window.currentColor = randomColor;
+  }
+
+  window.checkColor = (clicked) => {
+    if(clicked === window.currentColor){
+      userPoints += 5; savePoints();
+      document.getElementById('points').innerText = userPoints;
+      document.getElementById('gameArea').innerHTML = "TAMA! +5 Points 🎉 <br><button class='btn' onclick='playColorGame()'>Next</button>";
+    } else {
+      document.getElementById('gameArea').innerHTML = "Mali! Try
