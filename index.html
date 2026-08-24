@@ -3,222 +3,504 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SB Tambayan Gaming</title>
+<title>PointWallet</title>
 
 <style>
 *{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#0b1020;
-  color:white;
+  background:#f4f7fb;
+  color:#172033;
 }
+
+header{
+  background:#1266f1;
+  color:white;
+  padding:25px 20px;
+  border-radius:0 0 28px 28px;
+}
+
 .container{
   width:92%;
   max-width:500px;
-  margin:30px auto;
+  margin:auto;
 }
+
+.logo{
+  font-size:24px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+.balance{
+  font-size:36px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin:20px 0;
+}
+
+button{
+  border:0;
+  border-radius:14px;
+  padding:16px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.action{
+  background:white;
+  box-shadow:0 3px 12px #0001;
+}
+
+.primary{
+  background:#1266f1;
+  color:white;
+  width:100%;
+}
+
 .card{
-  background:#151d33;
-  padding:22px;
+  background:white;
+  padding:20px;
   border-radius:18px;
-  margin-bottom:18px;
-  box-shadow:0 8px 25px #0006;
+  margin-bottom:15px;
+  box-shadow:0 3px 12px #0001;
 }
-h1{text-align:center;color:#39e75f}
-h2{margin-top:0}
+
 input{
   width:100%;
   padding:14px;
-  margin:8px 0;
-  border:0;
+  margin:7px 0 12px;
+  border:1px solid #ddd;
   border-radius:10px;
-  background:#27304a;
-  color:white;
-}
-button{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  border:0;
-  border-radius:10px;
-  background:#39e75f;
-  color:#06100a;
-  font-weight:bold;
   font-size:16px;
 }
-button:active{transform:scale(.98)}
-.points{
-  text-align:center;
-  font-size:40px;
-  font-weight:bold;
-  color:#ffd43b;
+
+.hidden{
+  display:none;
 }
-.game{
-  background:#202a44;
-  padding:15px;
-  border-radius:12px;
-  margin:10px 0;
+
+.transaction{
+  padding:13px 0;
+  border-bottom:1px solid #eee;
 }
+
+.plus{
+  color:#159447;
+}
+
+.minus{
+  color:#d93025;
+}
+
 .small{
-  text-align:center;
-  color:#aeb7cc;
+  color:#777;
+  font-size:13px;
 }
-#dashboard{display:none}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- LOGIN -->
 
-  <div id="login" class="card">
-    <h1>🎮 SB TAMBAYAN</h1>
-    <p class="small">Gaming Platform Prototype</p>
+<div id="login" class="container" style="padding-top:70px">
 
-    <input id="username" type="text" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
+<div class="card">
 
-    <button onclick="login()">LOGIN</button>
-    <button onclick="register()" style="background:#27304a;color:white">
-      CREATE ACCOUNT
-    </button>
+<h1>⭐ PointWallet</h1>
 
-    <p id="message" class="small"></p>
-  </div>
+<p>Points wallet prototype</p>
 
-  <div id="dashboard">
+<input id="username"
+placeholder="Username">
 
-    <div class="card">
-      <h1>🎮 GAMING HUB</h1>
-      <p class="small">Welcome, <span id="player"></span>!</p>
+<input id="password"
+type="password"
+placeholder="Password">
 
-      <div class="points" id="points">0</div>
-      <p class="small">VIRTUAL POINTS</p>
-    </div>
-
-    <div class="card">
-      <h2>🎯 Games</h2>
-
-      <div class="game">
-        <b>⚡ Click Challenge</b>
-        <p>Click the button to earn virtual points.</p>
-        <button onclick="earnPoints(1)">PLAY +1 POINT</button>
-      </div>
-
-      <div class="game">
-        <b>🏆 Bonus Challenge</b>
-        <p>Complete a challenge and earn points.</p>
-        <button onclick="earnPoints(5)">COMPLETE +5 POINTS</button>
-      </div>
-
-      <div class="game">
-        <b>🎲 Lucky Number</b>
-        <p>Pick a number from 1–5.</p>
-        <button onclick="lucky()">PLAY</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>🏆 My Profile</h2>
-      <p>Player: <b id="profile"></b></p>
-      <p>Points: <b id="profilePoints">0</b></p>
-      <button onclick="logout()" style="background:#e74c3c;color:white">
-        LOGOUT
-      </button>
-    </div>
-
-  </div>
+<button class="primary"
+onclick="loginUser()">
+LOGIN
+</button>
 
 </div>
 
+</div>
+
+
+<!-- APP -->
+
+<div id="app" class="hidden">
+
+<header>
+
+<div class="container">
+
+<div class="logo">
+⭐ PointWallet
+</div>
+
+<div>
+Available Points
+</div>
+
+<div class="balance"
+id="balance">
+0
+</div>
+
+</div>
+
+</header>
+
+
+<div class="container">
+
+<div class="actions">
+
+<button class="action"
+onclick="openBox('send')">
+📤 Send Points
+</button>
+
+<button class="action"
+onclick="openBox('receive')">
+📥 Receive
+</button>
+
+<button class="action"
+onclick="openBox('withdraw')">
+💸 Withdraw
+</button>
+
+<button class="action"
+onclick="openBox('history')">
+📋 History
+</button>
+
+</div>
+
+
+<!-- SEND -->
+
+<div id="send"
+class="card hidden">
+
+<h3>📤 Send Points</h3>
+
+<input id="receiver"
+placeholder="Receiver username">
+
+<input id="sendAmount"
+type="number"
+placeholder="Points">
+
+<button class="primary"
+onclick="sendPoints()">
+SEND POINTS
+</button>
+
+</div>
+
+
+<!-- RECEIVE -->
+
+<div id="receive"
+class="card hidden">
+
+<h3>📥 Receive Points</h3>
+
+<p>
+Your username:
+</p>
+
+<b id="myUsername">
+</b>
+
+<p class="small">
+Give your username to another PointWallet user
+to receive points.
+</p>
+
+</div>
+
+
+<!-- WITHDRAW -->
+
+<div id="withdraw"
+class="card hidden">
+
+<h3>💸 Withdraw Request</h3>
+
+<p class="small">
+Demo only. This does not send real money.
+</p>
+
+<input id="withdrawAmount"
+type="number"
+placeholder="Points">
+
+<input id="gcashName"
+placeholder="GCash account name">
+
+<input id="gcashNumber"
+placeholder="GCash mobile number">
+
+<button class="primary"
+onclick="withdrawRequest()">
+REQUEST WITHDRAWAL
+</button>
+
+</div>
+
+
+<!-- HISTORY -->
+
+<div id="history"
+class="card hidden">
+
+<h3>📋 Transaction History</h3>
+
+<div id="transactions">
+No transactions yet.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
 <script>
 
-let playerName = localStorage.getItem("playerName");
-let points = Number(localStorage.getItem("points") || 0);
+let points = 1000;
 
-function showDashboard(){
-  if(playerName){
-    document.getElementById("login").style.display="none";
-    document.getElementById("dashboard").style.display="block";
+let username = "";
 
-    document.getElementById("player").innerText=playerName;
-    document.getElementById("profile").innerText=playerName;
 
-    updatePoints();
-  }
+/* LOGIN */
+
+function loginUser(){
+
+username =
+document.getElementById("username").value.trim();
+
+let password =
+document.getElementById("password").value;
+
+if(username === "" || password === ""){
+
+alert("Please enter username and password.");
+
+return;
+
 }
 
-function register(){
-  let name=document.getElementById("username").value.trim();
-  let pass=document.getElementById("password").value;
+document.getElementById("login")
+.classList.add("hidden");
 
-  if(!name || !pass){
-    document.getElementById("message").innerText=
-      "Please enter username and password.";
-    return;
-  }
+document.getElementById("app")
+.classList.remove("hidden");
 
-  localStorage.setItem("playerName",name);
-  localStorage.setItem("points","0");
+document.getElementById("myUsername")
+.innerText = username;
 
-  playerName=name;
-  points=0;
+updateBalance();
 
-  showDashboard();
 }
 
-function login(){
-  let name=document.getElementById("username").value.trim();
-  let pass=document.getElementById("password").value;
 
-  let savedName=localStorage.getItem("playerName");
+/* BALANCE */
 
-  if(!name || !pass){
-    document.getElementById("message").innerText=
-      "Please enter username and password.";
-    return;
-  }
+function updateBalance(){
 
-  if(savedName && name===savedName){
-    playerName=name;
-    points=Number(localStorage.getItem("points") || 0);
-    showDashboard();
-  }else{
-    document.getElementById("message").innerText=
-      "Account not found. Create an account first.";
-  }
+document.getElementById("balance")
+.innerText =
+points.toLocaleString();
+
 }
 
-function earnPoints(amount){
-  points += amount;
-  localStorage.setItem("points",points);
-  updatePoints();
+
+/* OPEN BOX */
+
+function openBox(id){
+
+document
+.getElementById(id)
+.classList.toggle("hidden");
+
 }
 
-function lucky(){
-  let number=Math.floor(Math.random()*5)+1;
-  alert("Your number is: "+number);
 
-  if(number===5){
-    earnPoints(10);
-    alert("🎉 You earned 10 virtual points!");
-  }else{
-    alert("Try again!");
-  }
+/* SEND */
+
+function sendPoints(){
+
+let receiver =
+document.getElementById("receiver")
+.value.trim();
+
+let amount =
+Number(
+document.getElementById("sendAmount")
+.value
+);
+
+if(receiver === "" || amount <= 0){
+
+alert("Enter receiver and amount.");
+
+return;
+
 }
 
-function updatePoints(){
-  document.getElementById("points").innerText=points;
-  document.getElementById("profilePoints").innerText=points;
+if(amount > points){
+
+alert("Not enough points.");
+
+return;
+
 }
 
-function logout(){
-  document.getElementById("dashboard").style.display="none";
-  document.getElementById("login").style.display="block";
+if(receiver === username){
+
+alert("You cannot send points to yourself.");
+
+return;
+
 }
 
-showDashboard();
+points -= amount;
+
+updateBalance();
+
+addTransaction(
+"Sent to " + receiver,
+amount,
+"minus"
+);
+
+alert(
+amount.toLocaleString() +
+" points sent successfully!"
+);
+
+}
+
+
+/* WITHDRAW REQUEST */
+
+function withdrawRequest(){
+
+let amount =
+Number(
+document.getElementById("withdrawAmount")
+.value
+);
+
+let name =
+document.getElementById("gcashName")
+.value.trim();
+
+let number =
+document.getElementById("gcashNumber")
+.value.trim();
+
+if(amount <= 0 ||
+name === "" ||
+number === ""){
+
+alert("Complete all information.");
+
+return;
+
+}
+
+if(amount > points){
+
+alert("Not enough points.");
+
+return;
+
+}
+
+points -= amount;
+
+updateBalance();
+
+addTransaction(
+"Withdrawal request to GCash ending " +
+number.slice(-4),
+amount,
+"minus"
+);
+
+alert(
+"Withdrawal request submitted for admin review."
+);
+
+}
+
+
+/* TRANSACTIONS */
+
+function addTransaction(
+title,
+amount,
+type
+){
+
+let box =
+document.getElementById("transactions");
+
+if(box.innerText ===
+"No transactions yet."){
+
+box.innerHTML = "";
+
+}
+
+let item =
+document.createElement("div");
+
+item.className =
+"transaction";
+
+item.innerHTML =
+
+"<b>" + title + "</b>" +
+
+"<br>" +
+
+"<span class='" + type + "'>" +
+
+(type === "plus" ? "+" : "-") +
+
+amount.toLocaleString() +
+
+" points</span>" +
+
+"<br>" +
+
+"<span class='small'>" +
+
+new Date().toLocaleString() +
+
+"</span>";
+
+box.prepend(item);
+
+}
 
 </script>
 
