@@ -5,14 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SB Tambayan - Points Site</title>
 <style>
-  body { font-family: Arial; background: #111; color: white; text-align: center; padding: 20px; }
-  .container { max-width: 500px; margin: auto; background: #222; padding: 20px; border-radius: 15px; }
+  body { font-family: Arial; background: #111; color: white; text-align: center; padding: 20px; margin: 0; }
+  .container { max-width: 500px; margin: auto; background: #222; padding: 20px; border-radius: 15px; box-shadow: 0 0 20px #ffc107; }
   input, button { width: 90%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; font-size: 16px; }
   .btn { background: #28a745; color: white; font-weight: bold; cursor: pointer; }
+  .btn:hover { background: #218838; }
   .btn-red { background: #dc3545; }
+  .btn-red:hover { background: #c82333; }
   .btn-yellow { background: #ffc107; color: black; }
+  .btn-yellow:hover { background: #e0a800; }
   .points { font-size: 35px; color: #ffc107; font-weight: bold; }
-  #gameArea { margin-top: 15px; padding: 15px; background: #333; border-radius: 10px; }
+  #gameArea { margin-top: 15px; padding: 15px; background: #333; border-radius: 10px; min-height: 80px; }
+  h1 { color: #ffc107; }
+  hr { border: 1px solid #444; margin: 15px 0; }
 </style>
 </head>
 <body>
@@ -70,11 +75,13 @@
   window.register = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    if(!email || !password) { alert("Lagay ka muna email at password"); return; }
     try { await createUserWithEmailAndPassword(auth, email, password); alert("Registered! Login ka na"); } catch(e) { alert("Error: " + e.message) }
   }
   window.login = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    if(!email || !password) { alert("Lagay ka muna email at password"); return; }
     try { await signInWithEmailAndPassword(auth, email, password); } catch(e) { alert("Error: " + e.message) }
   }
   window.logout = () => { signOut(auth); }
@@ -94,7 +101,7 @@
     if(ans === 'Blue') { userPoints += 10; savePoints(); document.getElementById('points').innerText = userPoints; document.getElementById('gameArea').innerHTML = "TAMA! +10 Points 🎉"; } else { document.getElementById('gameArea').innerHTML = "Mali! Try ulit"; }
   }
   window.playClicker = () => {
-    userPoints += 1; savePoints(); document.getElementById('points').innerText = userPoints; document.getElementById('gameArea').innerHTML = 'Na click mo! +1 pt<br>Points: ' + userPoints;
+    userPoints += 1; savePoints(); document.getElementById('points').innerText = userPoints; document.getElementById('gameArea').innerHTML = 'Na click mo! +1 pt<br>Points: ' + userPoints + '<br><button class="btn" onclick="playClicker()">Click ulit!</button>';
   }
   window.playColorGame = () => {
     const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
