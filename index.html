@@ -1,3 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boss Arcade - Play & Earn</title>
+<style>
+  body { background: #0f0f1a; color: white; font-family: Arial; margin: 0; padding: 20px; text-align: center; }
+  .box { background: #1e1e2f; padding: 20px; border-radius: 10px; max-width: 500px; margin: 20px auto; }
+  .btn { width: 100%; padding: 12px; margin: 6px 0; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+  .btn-blue { background: #2563eb; color: white; }
+  .btn-green { background: #16a34a; color: white; }
+  .btn-yellow { background: #f59e0b; color: black; }
+  .btn-red { background: #dc2626; color: white; }
+  input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; box-sizing: border-box; }
+  .game { display: none; }
+  .points { font-size: 24px; color: #fbbf24; font-weight: bold; }
+  #gameArea { width: 100%; height: 200px; background: #000; margin: 10px 0; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+</style>
+</head>
+<body>
+
+<h1>🎮 BOSS ARCADE 🎮</h1>
+<p>Ipon Points = Kikita ka sa Ads!</p>
+
+<!-- LOGIN BOX -->
+<div id="login-box" class="box">
+  <h2>Login / Register</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button class="btn btn-blue" onclick="register()">Mag Register</button>
+  <button class="btn btn-green" onclick="login()">Login</button>
+  <p id="auth-msg"></p>
+</div>
+
+<!-- ARCADE BOX -->
+<div id="arcade-box" class="box" style="display:none;">
+  <h2>Welcome Boss! <button class="btn btn-red" style="width:auto; padding:5px 10px;" onclick="logout()">Logout</button></h2>
+  <p>Your Points: <span class="points" id="points">0</span></p>
+
+  <h3>Pili ng Laro:</h3>
+  <button class="btn btn-yellow" onclick="playQuiz()">1. Quiz Game +10 pts</button>
+  <button class="btn btn-yellow" onclick="playClicker()">2. Clicker Game +1 pt</button>
+
+  <div id="gameArea">Pumili ka ng laro boss!</div>
+  
+  <!-- DITO LALABAS YUNG ADS LATER -->
+  <div style="margin-top:20px; padding:10px; background:#333; border-radius:8px;">
+    <p>Ads dito para kumita</p>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -34,7 +86,6 @@
       userPoints = docSnap.data().points;
     }
     document.getElementById('points').innerText = userPoints;
-    document.getElementById('clickPoints').innerText = userPoints;
   }
 
   // REGISTER
@@ -64,9 +115,34 @@
   window.playQuiz = () => {
     userPoints += 10;
     document.getElementById('points').innerText = userPoints;
-    document.getElementById('clickPoints').innerText = userPoints;
-    document.getElementById('gameArea').innerHTML = "Tama! +10 Points";
+    document.getElementById('gameArea').innerHTML = "Tama! +10 Points 🎉";
     savePoints();
   }
   window.playClicker = () => {
-    document.get
+    document.getElementById('gameArea').innerHTML = `Click mo ko! <br><span class="points" id="clickPoints">${userPoints}</span><br><button class="btn btn-blue" onclick="addClick()">CLICK!</button>`;
+  }
+  window.addClick = () => {
+    userPoints += 1;
+    document.getElementById('points').innerText = userPoints;
+    document.getElementById('clickPoints').innerText = userPoints;
+    savePoints();
+  }
+
+  // CHECK KUNG NAKA LOGIN
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      currentUser = user;
+      loadPoints(user.uid); // ILOAD YUNG LUMA NA POINTS
+      document.getElementById('login-box').style.display = 'none';
+      document.getElementById('arcade-box').style.display = 'block';
+    } else {
+      currentUser = null;
+      userPoints = 0;
+      document.getElementById('login-box').style.display = 'block';
+      document.getElementById('arcade-box').style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
