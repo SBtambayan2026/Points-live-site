@@ -1,86 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>BIBOY STORY TV</title>
+<title>BIBOY BUSINESS PORTAL</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{background:#000;color:#fff;font-family:Arial;margin:0;padding:0}
 .login-box{background:#262626;width:90%;max-width:400px;margin:50px auto;padding:30px;border-radius:12px;text-align:center}
-input{width:90%;padding:12px;margin:10px 0;border:none;border-radius:8px;background:#333;color:#fff}
-.btn{background:#ffb700;color:#000;border:none;width:95%;padding:14px;border-radius:10px;font-weight:bold;cursor:pointer;font-size:16px}
+input,select{width:90%;padding:12px;margin:10px 0;border:none;border-radius:8px;background:#333;color:#fff}
+.btn{background:#ffb700;color:#000;border:none;width:95%;padding:14px;border-radius:10px;font-weight:bold;cursor:pointer;margin:5px 0}
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0a0a0a}
-.username{color:#ffb700;font-size:20px;font-weight:bold}
+.username{color:#ffb700;font-weight:bold}
 .card{background:#262626;margin:15px;padding:20px;border-radius:12px}
-.amount{font-size:34px;font-weight:bold;margin:5px 0}
-.label{color:#ffb700;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
 img{width:100%;max-width:600px;margin:15px auto;display:block;border-radius:10px;padding:0 15px;box-sizing:border-box}
-.video-section{padding:0 15px 20px 15px}
-.video-title{text-align:center;color:#ffb700;font-size:20px;margin-bottom:10px}
-.comments-box{background:#111;margin:15px;padding:20px;border-radius:12px}
-#dashboard{display:none}
-.note{color:red;font-size:12px;text-align:center;padding:10px}
+#customerDash,#agentDash{display:none}
 </style>
 </head>
 <body>
 
 <!-- LOGIN PAGE -->
-<div id="login" class="login-box">
-  <h2>🔥 BIBOY STORY TV 🔥</h2>
-  <p class="note">DEMO LANG TO BOSS - KAHIT ANONG USERNAME OK LANG</p>
-  <input type="text" id="user" placeholder="Ilagay Username mo">
-  <input type="password" id="pass" placeholder="Ilagay Password">
-  <button class="btn" onclick="login()">PASOK</button>
+<div id="loginPage" class="login-box">
+  <h2>🏪 BIBOY BUSINESS</h2>
+  <p style="color:gray;font-size:12px">Mag-register muna para makapasok</p>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="pass" placeholder="Password">
+  <select id="accType">
+    <option value="customer">Customer Account</option>
+    <option value="agent">Agent/Admin Account</option>
+  </select>
+  <button class="btn" onclick="register()">REGISTER</button>
+  <button class="btn" onclick="login()">LOGIN</button>
 </div>
 
-<!-- DASHBOARD PAGE -->
-<div id="dashboard">
-    <div class="topbar">
-        <span style="font-size:24px">☰</span>
-        <span class="username" id="userShow"></span>
+<!-- CUSTOMER DASHBOARD -->
+<div id="customerDash">
+  <div class="topbar">
+    <span>Customer Portal</span>
+    <span class="username" id="custName"></span>
+    <button onclick="logout()" style="background:red;color:#fff;border:none;padding:8px;border-radius:5px">Logout</button>
+  </div>
+  
+  <img src="SABONGTAMBAYAN.jpg">
+
+  <div class="card">
+    <h3>Welcome!</h3>
+    <div class="grid">
+      <div><b>Points:</b> 250</div>
+      <div><b>Orders:</b> 3</div>
     </div>
+    <button class="btn">Order Now</button>
+  </div>
 
-    <img src="SABONGTAMBAYAN.jpg">
-
-    <div class="card">
-        <div>Current Wallet</div>
-        <div class="amount">₱0.00</div>
-        <div class="label">Available Balance</div>
-    </div>
-
-    <div class="video-section">
-        <div class="video-title">NANG MGA ASWANG</div>
-        <iframe width="100%" height="220" src="https://www.youtube.com/embed/Df6rbQqODOs" 
-        frameborder="0" allowfullscreen style="border-radius: 10px;"></iframe>
-    </div>
-
-    <!-- COMMENTS BAR PARANG FB REELS -->
-    <div class="comments-box">
-        <h3>💬 COMMENTS + REQUEST VIDEO</h3>
-        <p>Mag comment ka dito kung anong video gusto mo next!</p>
-        
-        <!-- FACEBOOK COMMENTS PLUGIN -->
-        <div id="fb-root"></div>
-        <script async defer crossorigin="anonymous" 
-        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0"></script>
-        
-        <div class="fb-comments" 
-        data-href="https://sbtambayan2026.github.io/Points-live-site/" 
-        data-width="100%" 
-        data-numposts="10"
-        data-colorscheme="dark">
-        </div>
-    </div>
-</div>
-
-<script>
-function login(){
-  let u = document.getElementById('user').value;
-  if(u == ""){ alert('Lagay ka username boss'); return; }
-  document.getElementById('userShow').innerText = u;
-  document.getElementById('login').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-  window.scrollTo(0,0);
-}
-</script>
-</body>
-</html>
+  <div class="card">
+    <h3>NANG MGA ASWANG</h3>
