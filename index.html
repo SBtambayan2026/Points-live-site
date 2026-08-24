@@ -20,4 +20,100 @@
       max-width: 500px;
       margin: 20px auto;
     }
+    .btn {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      margin: 8px auto;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      display: block;
+      color: white;
+    }
+    .btn-blue { background: #2563eb; }
+    .btn-green { background: #16a34a; }
+    .btn-pink { background: #e1306c; }
+    .btn-black { background: #000; }
+    .btn-whatsapp { background: #25D366; }
+    
+    #auth-box {
+      background: #1e1e2f;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: 20px auto;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
 
+  <div class="info-box">
+    📌 ElectronicGames Ecuador<br><br>
+    🎮 Consolas: PS5 | Xbox Series X/S | Nintendo Switch<br><br>
+    🕹️ Juegos de todas las plataformas 📱 WhatsApp: +593 96 967 8365<br><br>
+    🚚 Envíos a todo el país 📍 Atención personalizada
+  </div>
+
+  <button class="btn btn-blue" onclick="alert('Info copiada!')">📋 Copiar información completa</button>
+
+  <h2 style="color: #fbbf24; margin-top: 30px;">Contáctanos y síguenos</h2>
+
+  <button class="btn btn-pink">📷 Instagram</button>
+  <button class="btn btn-black">🎵 TikTok</button>
+  <button class="btn btn-whatsapp">💬 WhatsApp</button>
+
+  <div id="auth-box">
+    <h2>Login / Register</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button class="btn btn-blue" onclick="register()">Mag Register</button>
+    <button class="btn btn-green" onclick="login()">Login</button>
+    <p id="auth-msg" style="margin-top:10px;"></p>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "ILAGAY_MO_DITO",
+    authDomain: "biboy-story-demo.firebaseapp.com",
+    projectId: "biboy-story-demo",
+    storageBucket: "biboy-story-demo.appspot.com",
+    messagingSenderId: "ILAGAY_MO_DITO",
+    appId: "ILAGAY_MO_DITO"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.register = function() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    createUserWithEmailAndPassword(auth, email, password)
+    .then(() => { document.getElementById('auth-msg').innerText = "Registered! ✅" })
+    .catch((error) => { document.getElementById('auth-msg').innerText = "Error: " + error.message });
+  }
+
+  window.login = function() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    signInWithEmailAndPassword(auth, email, password)
+    .then(() => { document.getElementById('auth-msg').innerText = "Login Success! ✅" })
+    .catch((error) => { document.getElementById('auth-msg').innerText = "Error: " + error.message });
+  }
+</script>
+
+</body>
+</html>
