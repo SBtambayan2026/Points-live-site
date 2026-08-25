@@ -1,848 +1,235 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PointWallet</title>
-
-<style>
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f3f6fb;
-  color:#172033;
-}
-
-.hidden{display:none!important}
-
-.container{
-  width:92%;
-  max-width:500px;
-  margin:auto;
-}
-
-.auth{
-  padding-top:50px;
-}
-
-.card{
-  background:white;
-  padding:20px;
-  border-radius:18px;
-  margin-bottom:15px;
-  box-shadow:0 4px 15px #0001;
-}
-
-h1,h2,h3{margin-top:0}
-
-input{
-  width:100%;
-  padding:14px;
-  margin:7px 0 12px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  font-size:16px;
-}
-
-button{
-  border:0;
-  border-radius:12px;
-  padding:14px;
-  font-size:15px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.primary{
-  background:#1266f1;
-  color:white;
-  width:100%;
-}
-
-.secondary{
-  background:#eef3ff;
-  color:#1266f1;
-  width:100%;
-  margin-top:8px;
-}
-
-header{
-  background:#1266f1;
-  color:white;
-  padding:24px 0;
-  border-radius:0 0 28px 28px;
-}
-
-.logo{
-  font-size:24px;
-  font-weight:bold;
-}
-
-.user{
-  margin-top:18px;
-  opacity:.9;
-}
-
-.balance{
-  font-size:38px;
-  font-weight:bold;
-  margin-top:5px;
-}
-
-.actions{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  margin:20px 0;
-}
-
-.action{
-  background:white;
-  box-shadow:0 3px 12px #0001;
-}
-
-.transaction{
-  padding:13px 0;
-  border-bottom:1px solid #eee;
-}
-
-.plus{color:#159447}
-.minus{color:#d93025}
-
-.small{
-  color:#777;
-  font-size:13px;
-}
-
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.logout{
-  background:#ffffff22;
-  color:white;
-  padding:9px 12px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- REGISTER / LOGIN -->
-
-<div id="authPage" class="container auth">
-
-  <div class="card" id="loginBox">
-
-    <h1>⭐ PointWallet</h1>
-    <p>Login to your account</p>
-
-    <input id="loginUsername"
-           placeholder="Username">
-
-    <input id="loginPassword"
-           type="password"
-           placeholder="Password">
-
-    <button class="primary"
-            onclick="loginUser()">
-      LOGIN
-    </button>
-
-    <button class="secondary"
-            onclick="showRegister()">
-      CREATE ACCOUNT
-    </button>
-
-  </div>
-
-
-  <div class="card hidden" id="registerBox">
-
-    <h1>Create Account</h1>
-
-    <input id="regUsername"
-           placeholder="Choose username">
-
-    <input id="regPassword"
-           type="password"
-           placeholder="Choose password">
-
-    <button class="primary"
-            onclick="registerUser()">
-      REGISTER
-    </button>
-
-    <button class="secondary"
-            onclick="showLogin()">
-      BACK TO LOGIN
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- APP -->
-
-<div id="app" class="hidden">
-
-<header>
-
-<div class="container">
-
-<div class="topbar">
-
-<div class="logo">
-⭐ PointWallet
-</div>
-
-<button class="logout"
-        onclick="logout()">
-Logout
-</button>
-
-</div>
-
-<div class="user">
-Hello, <b id="currentUser"></b>
-</div>
-
-<div class="small"
-     style="color:white;margin-top:18px">
-Available Points
-</div>
-
-<div class="balance"
-     id="balance">
-0
-</div>
-
-</div>
-
-</header>
-
-
-<div class="container">
-
-<div class="actions">
-
-<button class="action"
-        onclick="openBox('sendBox')">
-📤 Send Points
-</button>
-
-<button class="action"
-        onclick="openBox('receiveBox')">
-📥 Receive
-</button>
-
-<button class="action"
-        onclick="openBox('withdrawBox')">
-💸 Withdraw
-</button>
-
-<button class="action"
-        onclick="openBox('historyBox')">
-📋 History
-</button>
-
-</div>
-
-
-<!-- SEND -->
-
-<div id="sendBox"
-     class="card hidden">
-
-<h3>📤 Send Points</h3>
-
-<input id="receiver"
-       placeholder="Receiver username">
-
-<input id="sendAmount"
-       type="number"
-       min="1"
-       placeholder="Points">
-
-<button class="primary"
-        onclick="sendPoints()">
-SEND POINTS
-</button>
-
-</div>
-
-
-<!-- RECEIVE -->
-
-<div id="receiveBox"
-     class="card hidden">
-
-<h3>📥 Receive Points</h3>
-
-<p>Your username:</p>
-
-<h2 id="receiveUsername"></h2>
-
-<p class="small">
-Another PointWallet user can use this username
-to send you points.
-</p>
-
-</div>
-
-
-<!-- WITHDRAW -->
-
-<div id="withdrawBox"
-     class="card hidden">
-
-<h3>💸 Withdrawal Request</h3>
-
-<p class="small">
-Demo only. This creates a pending request;
-it does not transfer real money.
-</p>
-
-<input id="withdrawAmount"
-       type="number"
-       min="1"
-       placeholder="Points">
-
-<input id="withdrawName"
-       placeholder="Account name">
-
-<input id="withdrawNumber"
-       placeholder="GCash/mobile number">
-
-<button class="primary"
-        onclick="requestWithdraw()">
-SUBMIT REQUEST
-</button>
-
-</div>
-
-
-<!-- HISTORY -->
-
-<div id="historyBox"
-     class="card hidden">
-
-<h3>📋 Transaction History</h3>
-
-<div id="transactions">
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-const STORAGE_KEY = "pointwallet_users_v1";
-const SESSION_KEY = "pointwallet_session_v1";
-
-let users = JSON.parse(
-  localStorage.getItem(STORAGE_KEY) || "{}"
-);
-
-let currentUser = null;
-
-
-/* SAVE USERS */
-
-function saveUsers(){
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(users)
-  );
-
-}
-
-
-/* REGISTER */
-
-function registerUser(){
-
-  let username =
-    document.getElementById("regUsername")
-    .value.trim();
-
-  let password =
-    document.getElementById("regPassword")
-    .value;
-
-  if(username.length < 3){
-
-    alert("Username must be at least 3 characters.");
-
-    return;
-
-  }
-
-  if(password.length < 4){
-
-    alert("Password must be at least 4 characters.");
-
-    return;
-
-  }
-
-  let key = username.toLowerCase();
-
-  if(users[key]){
-
-    alert("Username already exists.");
-
-    return;
-
-  }
-
-  users[key] = {
-
-    username: username,
-
-    password: password,
-
-    points: 1000,
-
-    transactions: []
-
-  };
-
-  saveUsers();
-
-  alert(
-    "Account created! You received 1,000 demo points."
-  );
-
-  document.getElementById("loginUsername")
-    .value = username;
-
-  showLogin();
-
-}
-
-
-/* LOGIN */
-
-function loginUser(){
-
-  let username =
-    document.getElementById("loginUsername")
-    .value.trim();
-
-  let password =
-    document.getElementById("loginPassword")
-    .value;
-
-  let key = username.toLowerCase();
-
-  if(!users[key]){
-
-    alert("Account not found.");
-
-    return;
-
-  }
-
-  if(users[key].password !== password){
-
-    alert("Incorrect password.");
-
-    return;
-
-  }
-
-  currentUser = key;
-
-  localStorage.setItem(
-    SESSION_KEY,
-    currentUser
-  );
-
-  showApp();
-
-}
-
-
-/* SHOW APP */
-
-function showApp(){
-
-  if(!currentUser || !users[currentUser]){
-    return;
-  }
-
-  document.getElementById("authPage")
-    .classList.add("hidden");
-
-  document.getElementById("app")
-    .classList.remove("hidden");
-
-  document.getElementById("currentUser")
-    .innerText =
-    users[currentUser].username;
-
-  document.getElementById("receiveUsername")
-    .innerText =
-    users[currentUser].username;
-
-  updateBalance();
-
-  renderHistory();
-
-}
-
-
-/* LOGOUT */
-
-function logout(){
-
-  currentUser = null;
-
-  localStorage.removeItem(SESSION_KEY);
-
-  document.getElementById("app")
-    .classList.add("hidden");
-
-  document.getElementById("authPage")
-    .classList.remove("hidden");
-
-}
-
-
-/* BALANCE */
-
-function updateBalance(){
-
-  let points =
-    users[currentUser].points;
-
-  document.getElementById("balance")
-    .innerText =
-    points.toLocaleString();
-
-}
-
-
-/* OPEN BOX */
-
-function openBox(id){
-
-  document.getElementById(id)
-    .classList.toggle("hidden");
-
-}
-
-
-/* SEND POINTS */
-
-function sendPoints(){
-
-  let receiver =
-    document.getElementById("receiver")
-    .value.trim();
-
-  let amount =
-    Number(
-      document.getElementById("sendAmount")
-      .value
-    );
-
-  let receiverKey =
-    receiver.toLowerCase();
-
-  if(!users[receiverKey]){
-
-    alert("Receiver account not found.");
-
-    return;
-
-  }
-
-  if(receiverKey === currentUser){
-
-    alert("You cannot send points to yourself.");
-
-    return;
-
-  }
-
-  if(!Number.isInteger(amount) || amount <= 0){
-
-    alert("Enter a valid whole number of points.");
-
-    return;
-
-  }
-
-  if(amount > users[currentUser].points){
-
-    alert("Insufficient points.");
-
-    return;
-
-  }
-
-
-  users[currentUser].points -= amount;
-
-  users[receiverKey].points += amount;
-
-
-  users[currentUser].transactions.unshift({
-
-    type:"sent",
-
-    title:
-      "Sent to " +
-      users[receiverKey].username,
-
-    amount:amount,
-
-    time:new Date().toLocaleString()
-
-  });
-
-
-  users[receiverKey].transactions.unshift({
-
-    type:"received",
-
-    title:
-      "Received from " +
-      users[currentUser].username,
-
-    amount:amount,
-
-    time:new Date().toLocaleString()
-
-  });
-
-
-  saveUsers();
-
-  updateBalance();
-
-  renderHistory();
-
-  document.getElementById("receiver").value="";
-  document.getElementById("sendAmount").value="";
-
-  alert("Points sent successfully!");
-
-}
-
-
-/* WITHDRAW REQUEST */
-
-function requestWithdraw(){
-
-  let amount =
-    Number(
-      document.getElementById("withdrawAmount")
-      .value
-    );
-
-  let name =
-    document.getElementById("withdrawName")
-    .value.trim();
-
-  let number =
-    document.getElementById("withdrawNumber")
-    .value.trim();
-
-
-  if(!Number.isInteger(amount) || amount <= 0){
-
-    alert("Enter a valid amount.");
-
-    return;
-
-  }
-
-  if(amount > users[currentUser].points){
-
-    alert("Insufficient points.");
-
-    return;
-
-  }
-
-  if(name === "" || number === ""){
-
-    alert("Complete the withdrawal information.");
-
-    return;
-
-  }
-
-
-  users[currentUser].transactions.unshift({
-
-    type:"pending",
-
-    title:"Withdrawal request",
-
-    amount:amount,
-
-    time:new Date().toLocaleString(),
-
-    status:"Pending admin review"
-
-  });
-
-
-  saveUsers();
-
-  renderHistory();
-
-
-  alert(
-    "Withdrawal request submitted as PENDING."
-  );
-
-}
-
-
-/* HISTORY */
-
-function renderHistory(){
-
-  let box =
-    document.getElementById("transactions");
-
-  let list =
-    users[currentUser].transactions;
-
-
-  if(list.length === 0){
-
-    box.innerHTML =
-      "<p class='small'>No transactions yet.</p>";
-
-    return;
-
-  }
-
-
-  box.innerHTML = "";
-
-
-  list.forEach(function(tx){
-
-    let div =
-      document.createElement("div");
-
-    div.className =
-      "transaction";
-
-
-    let symbol = "";
-
-    let className = "";
-
-
-    if(tx.type === "received"){
-
-      symbol = "+";
-      className = "plus";
-
-    }else{
-
-      symbol = "-";
-      className = "minus";
-
+composer create-project laravel/laravel livebet
+cd livebet
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+npm install && npm run build
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void {
+        Schema::table('users', function (Blueprint $table) {
+            $table->enum('role', ['admin','agent','player'])->default('player')->after('email');
+            $table->unsignedBigInteger('agent_id')->nullable()->after('role');
+            $table->decimal('balance_points', 10, 2)->default(0)->after('agent_id');
+        });
     }
+    public function down(): void {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['role','agent_id','balance_points']);
+        });
+    }
+};
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('lives', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('room_id');
+            $table->enum('status', ['live','ended'])->default('live');
+            $table->foreignId('started_by')->constrained('users');
+            $table->timestamps();
+        });
+    }
+    public function down(): void { Schema::dropIfExists('lives'); }
+};
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-    let status =
-      tx.status
-      ? "<br><span class='small'>" +
-        tx.status +
-        "</span>"
-      : "";
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->enum('type', ['cashin','cashout','bet','win','agent_topup']);
+            $table->decimal('amount_points', 10, 2);
+            $table->decimal('amount_peso', 10, 2)->nullable();
+            $table->string('method')->nullable();
+            $table->string('reference')->nullable();
+            $table->enum('status', ['pending','approved','rejected'])->default('pending');
+            $table->timestamps();
+        });
+    }
+    public function down(): void { Schema::dropIfExists('transactions'); }
+};
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-
-    div.innerHTML =
-
-      "<b>" +
-      tx.title +
-      "</b>" +
-
-      "<br>" +
-
-      "<span class='" +
-      className +
-      "'>" +
-
-      symbol +
-      tx.amount.toLocaleString() +
-      " points</span>" +
-
-      "<br>" +
-
-      "<span class='small'>" +
-      tx.time +
-      "</span>" +
-
-      status;
-
-
-    box.appendChild(div);
-
-  });
-
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('bets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('live_id')->constrained();
+            $table->string('bet_on');
+            $table->decimal('amount_points', 10, 2);
+            $table->decimal('odds', 5, 2)->default(1.90);
+            $table->enum('status', ['pending','win','lose'])->default('pending');
+            $table->decimal('win_amount', 10, 2)->default(0);
+            $table->timestamps();
+        });
+    }
+    public function down(): void { Schema::dropIfExists('bets'); }
+};
+<?php namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class Live extends Model {
+    protected $fillable = ['title','room_id','status','started_by'];
+    public function user(){ return $this->belongsTo(User::class,'started_by'); }
 }
-
-
-/* SWITCH AUTH BOXES */
-
-function showRegister(){
-
-  document.getElementById("loginBox")
-    .classList.add("hidden");
-
-  document.getElementById("registerBox")
-    .classList.remove("hidden");
-
+<?php namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class Transaction extends Model {
+    protected $fillable = ['user_id','type','amount_points','amount_peso','method','reference','status'];
+    public function user(){ return $this->belongsTo(User::class); }
 }
-
-
-function showLogin(){
-
-  document.getElementById("registerBox")
-    .classList.add("hidden");
-
-  document.getElementById("loginBox")
-    .classList.remove("hidden");
-
+<?php namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class Bet extends Model {
+    protected $fillable = ['user_id','live_id','bet_on','amount_points','odds','status','win_amount'];
+    public function user(){ return $this->belongsTo(User::class); }
 }
+<?php namespace App\Http\Controllers; use App\Models\Live; use App\Models\Bet; use Illuminate\Http\Request;
 
-
-/* AUTO LOGIN */
-
-let savedSession =
-  localStorage.getItem(SESSION_KEY);
-
-if(savedSession && users[savedSession]){
-
-  currentUser = savedSession;
-
-  showApp();
-
+class LiveController extends Controller {
+    public function index() {
+        $live = Live::where('status','live')->first();
+        $myBets = auth()->check() ? Bet::where('user_id',auth()->id())->where('live_id',$live->id ?? 0)->get() : [];
+        return view('live', compact('live','myBets'));
+    }
+    public function start(Request $r) {
+        $r->validate(['title'=>'required','room_id'=>'required']);
+        Live::create($r->only('title','room_id') + ['started_by'=>auth()->id()]);
+        return back()->with('success','Live Started');
+    }
+    public function end(Request $r) {
+        $live = Live::find($r->live_id);
+        foreach(Bet::where('live_id',$live->id)->where('status','pending')->get() as $bet){
+            if($bet->bet_on == $r->winner){
+                $win = $bet->amount_points * $bet->odds;
+                $bet->update(['status'=>'win','win_amount'=>$win]);
+                $bet->user->increment('balance_points', $win);
+                Transaction::create(['user_id'=>$bet->user_id,'type'=>'win','amount_points'=>$win,'status'=>'approved']);
+            } else { $bet->update(['status'=>'lose']); }
+        }
+        $live->update(['status'=>'ended']);
+        return back()->with('success','Winner: '.$r->winner);
+    }
 }
+<?php namespace App\Http\Controllers; use App\Models\Transaction; use Illuminate\Http\Request;
 
-</script>
-
-</body>
-</html>
+class WalletController extends Controller {
+    public function wallet() {
+        $tx = Transaction::where('user_id',auth()->id())->latest()->get();
+        return view('wallet', compact('tx'));
+    }
+    public function cashin(Request $r) {
+        $r->validate(['amount'=>'required|numeric|min:100']);
+        Transaction::create([
+            'user_id'=>auth()->id(),'type'=>'cashin','amount_peso'=>$r->amount,
+            'amount_points'=>$r->amount*10,'method'=>$r->method,'status'=>'pending'
+        ]);
+        return back()->with('success','Cashin request sent. Wait for approval');
+    }
+    public function cashout(Request $r) {
+        $r->validate(['amount'=>'required|numeric|min:100']);
+        if(auth()->user()->balance_points < $r->amount) return back()->with('error','Not enough points');
+        auth()->user()->decrement('balance_points',$r->amount);
+        Transaction::create([
+            'user_id'=>auth()->id(),'type'=>'cashout','amount_points'=>$r->amount,
+            'amount_peso'=>$r->amount/10,'method'=>$r->method,'status'=>'pending'
+        ]);
+        return back()->with('success','Cashout request sent');
+    }
+}
+          <?php namespace App\Http\Controllers; use App\Models\Bet; use App\Models\Transaction; use Illuminate\Http\Request;
+class BetController extends Controller {
+    public function place(Request $r) {
+        $r->validate(['live_id'=>'required','bet_on'=>'required','amount'=>'required|numeric|min:10']);
+        $user = auth()->user();
+        if($user->balance_points < $r->amount) return back()->with('error','Not enough points');
+        $user->decrement('balance_points',$r->amount);
+        Bet::create(['user_id'=>$user->id,'live_id'=>$r->live_id,'bet_on'=>$r->bet_on,'amount_points'=>$r->amount]);
+        Transaction::create(['user_id'=>$user->id,'type'=>'bet','amount_points'=>$r->amount,'status'=>'approved']);
+        return back()->with('success','Bet Placed: '.$r->bet_on);
+    }
+}
+   <?php use App\Http\Controllers\LiveController; use App\Http\Controllers\WalletController; use App\Http\Controllers\BetController;
+Route::get('/', [LiveController::class, 'index'])->name('home');
+  Route::middleware('auth')->group(function () {
+    Route::get('/wallet', [WalletController::class, 'wallet']);
+    Route::post('/wallet/cashin', [WalletController::class, 'cashin']);
+    Route::post('/wallet/cashout', [WalletController::class, 'cashout']);
+    Route::post('/bet', [BetController::class, 'place']);
+});
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::post('/live/start', [LiveController::class, 'start']);
+    Route::post('/live/end', [LiveController::class, 'end']);
+}); 
+<x-app-layout>
+<div class="p-4">
+    @if(session('success')) <div class="bg-green-200 p-2">{{session('success')}}</div> @endif
+    @if($live)
+        <h1 class="text-2xl font-bold">{{ $live->title }}</h1>
+        <div class="bg-black h-96 mb-4">ZEGO PLAYER HERE: Room ID {{ $live->room_id }}</div>
+        
+        <form action="/bet" method="POST" class="flex gap-2">
+            @csrf <input type="hidden" name="live_id" value="{{ $live->id }}">
+            <button name="bet_on" value="Pula" class="bg-red-500 text-white px-4 py-2">PULA 1.9x</button>
+            <button name="bet_on" value="Berde" class="bg-green-500 text-white px-4 py-2">BERDE 1.9x</button>
+            <button name="bet_on" value="Bughaw" class="bg-blue-500 text-white px-4 py-2">BUGHAW 1.9x</button>
+            <input type="number" name="amount" placeholder="Points" class="border px-2">
+            <button class="bg-gray-800 text-white px-4">TAYA</button>
+        </form>
+        <h2>Balance: {{ auth()->user()->balance_points }} pts</h2>
+    @else <h1>Walang Live Ngayon</h1> @endif
+    @if(auth()->user()->role == 'admin')
+    <hr class="my-4">
+    <form action="/admin/live/start" method="POST">
+        @csrf <input name="title" placeholder="Event Name" class="border">
+        <input name="room_id" placeholder="ZEGO Room ID" class="border">
+        <button class="bg-red-600 text-white px-4">START LIVE</button>
+    </form>
+    <form action="/admin/live/end" method="POST" class="mt-2">
+        @csrf <input type="hidden" name="live_id" value="{{ $live->id ?? '' }}">
+        <button name="winner" value="Pula">Declare PULA</button>
+        <button name="winner" value="Berde">Declare BERDE</button>
+    </form>
+    @endif
+</div>
+</x-app-layout> 
+<?php namespace App\Http\Controllers; 
+use App\Models\Transaction; // DAGDAG MO TO
+use Illuminate\Http\Request;
+class WalletController extends Controller {
+<x-app-layout>
+<div class="p-4">
+    <h1 class="text-2xl font-bold">Wallet: {{ auth()->user()->balance_points }} pts</h1>
+    <div class="flex gap-4 mt-2">
+        <form action="/wallet/cashin" method="POST" class="border p-3">
+            @csrf <h2>Cash In</h2>
+            <select name="method" class="border"><option>GCash</option><option>Maya</option><option>Bank</option></select>
+            <input type="number" name="amount" placeholder="Min 100 Peso" class="border p-1">
+            <button class="bg-green-600 text-white px-2">Request</button>
+        </form>
+        <form action="/wallet/cashout" method="POST" class="border p-3">
+            @csrf <h2>Cash Out</h2>
+            <select name="method" class="border"><option>GCash</option><option>Maya</option><option>Bank</option></select>
+            <input type="number" name="amount" placeholder="Min 100 Points" class="border p-1">
+            <button class="bg-red-600 text-white px-2">Request</button>
+        </form>
+    </div>
+    <h2 class="mt-4 font-bold">History</h2>
+    @foreach($tx as $t) 
+        <div class="border-b p-1">{{ $t->created_at }} - {{ $t->type }} - {{ $t->amount_points }} pts - {{ $t->status }}</div> 
+    @endforeach
+</div>
+</x-app-layout>
