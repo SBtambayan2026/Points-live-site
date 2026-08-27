@@ -1,235 +1,170 @@
-composer create-project laravel/laravel livebet
-cd livebet
-composer require laravel/breeze --dev
-php artisan breeze:install blade
-npm install && npm run build
-<?php
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABONG TAMBAYAN</title>
 
-return new class extends Migration {
-    public function up(): void {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin','agent','player'])->default('player')->after('email');
-            $table->unsignedBigInteger('agent_id')->nullable()->after('role');
-            $table->decimal('balance_points', 10, 2)->default(0)->after('agent_id');
-        });
-    }
-    public function down(): void {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role','agent_id','balance_points']);
-        });
-    }
-};
-<?php
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#101522;
+  color:white;
+}
+header{
+  background:#182238;
+  padding:20px;
+  text-align:center;
+}
+header h1{margin:0;font-size:28px}
+.container{
+  width:92%;
+  max-width:600px;
+  margin:20px auto;
+}
+.card{
+  background:#1b263d;
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:18px;
+}
+input{
+  width:100%;
+  padding:13px;
+  border:0;
+  border-radius:8px;
+  margin:8px 0;
+}
+button{
+  border:0;
+  border-radius:8px;
+  padding:11px 16px;
+  margin:4px;
+  cursor:pointer;
+  font-weight:bold;
+}
+.join{background:#21c477;color:white;width:100%}
+.react{background:#293650;color:white}
+.post{
+  background:#111a2b;
+  padding:15px;
+  border-radius:10px;
+  margin-top:12px;
+}
+.small{color:#aeb8cc;font-size:13px}
+</style>
+</head>
 
-return new class extends Migration {
-    public function up(): void {
-        Schema::create('lives', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->string('room_id');
-            $table->enum('status', ['live','ended'])->default('live');
-            $table->foreignId('started_by')->constrained('users');
-            $table->timestamps();
-        });
-    }
-    public function down(): void { Schema::dropIfExists('lives'); }
-};
-<?php
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+<body>
 
-return new class extends Migration {
-    public function up(): void {
-        Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->enum('type', ['cashin','cashout','bet','win','agent_topup']);
-            $table->decimal('amount_points', 10, 2);
-            $table->decimal('amount_peso', 10, 2)->nullable();
-            $table->string('method')->nullable();
-            $table->string('reference')->nullable();
-            $table->enum('status', ['pending','approved','rejected'])->default('pending');
-            $table->timestamps();
-        });
-    }
-    public function down(): void { Schema::dropIfExists('transactions'); }
-};
-<?php
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+<header>
+  <h1>🐓 SABONG TAMBAYAN</h1>
+  <div class="small">Community • Join • React</div>
+</header>
 
-return new class extends Migration {
-    public function up(): void {
-        Schema::create('bets', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('live_id')->constrained();
-            $table->string('bet_on');
-            $table->decimal('amount_points', 10, 2);
-            $table->decimal('odds', 5, 2)->default(1.90);
-            $table->enum('status', ['pending','win','lose'])->default('pending');
-            $table->decimal('win_amount', 10, 2)->default(0);
-            $table->timestamps();
-        });
-    }
-    public function down(): void { Schema::dropIfExists('bets'); }
-};
-<?php namespace App\Models; use Illuminate\Database\Eloquent\Model;
-class Live extends Model {
-    protected $fillable = ['title','room_id','status','started_by'];
-    public function user(){ return $this->belongsTo(User::class,'started_by'); }
-}
-<?php namespace App\Models; use Illuminate\Database\Eloquent\Model;
-class Transaction extends Model {
-    protected $fillable = ['user_id','type','amount_points','amount_peso','method','reference','status'];
-    public function user(){ return $this->belongsTo(User::class); }
-}
-<?php namespace App\Models; use Illuminate\Database\Eloquent\Model;
-class Bet extends Model {
-    protected $fillable = ['user_id','live_id','bet_on','amount_points','odds','status','win_amount'];
-    public function user(){ return $this->belongsTo(User::class); }
-}
-<?php namespace App\Http\Controllers; use App\Models\Live; use App\Models\Bet; use Illuminate\Http\Request;
+<div class="container">
 
-class LiveController extends Controller {
-    public function index() {
-        $live = Live::where('status','live')->first();
-        $myBets = auth()->check() ? Bet::where('user_id',auth()->id())->where('live_id',$live->id ?? 0)->get() : [];
-        return view('live', compact('live','myBets'));
-    }
-    public function start(Request $r) {
-        $r->validate(['title'=>'required','room_id'=>'required']);
-        Live::create($r->only('title','room_id') + ['started_by'=>auth()->id()]);
-        return back()->with('success','Live Started');
-    }
-    public function end(Request $r) {
-        $live = Live::find($r->live_id);
-        foreach(Bet::where('live_id',$live->id)->where('status','pending')->get() as $bet){
-            if($bet->bet_on == $r->winner){
-                $win = $bet->amount_points * $bet->odds;
-                $bet->update(['status'=>'win','win_amount'=>$win]);
-                $bet->user->increment('balance_points', $win);
-                Transaction::create(['user_id'=>$bet->user_id,'type'=>'win','amount_points'=>$win,'status'=>'approved']);
-            } else { $bet->update(['status'=>'lose']); }
-        }
-        $live->update(['status'=>'ended']);
-        return back()->with('success','Winner: '.$r->winner);
-    }
-}
-<?php namespace App\Http\Controllers; use App\Models\Transaction; use Illuminate\Http\Request;
+  <div class="card" id="joinBox">
+    <h2>👤 Join SABONG TAMBAYAN</h2>
+    <p>Ilagay ang pangalan mo para makapasok.</p>
 
-class WalletController extends Controller {
-    public function wallet() {
-        $tx = Transaction::where('user_id',auth()->id())->latest()->get();
-        return view('wallet', compact('tx'));
-    }
-    public function cashin(Request $r) {
-        $r->validate(['amount'=>'required|numeric|min:100']);
-        Transaction::create([
-            'user_id'=>auth()->id(),'type'=>'cashin','amount_peso'=>$r->amount,
-            'amount_points'=>$r->amount*10,'method'=>$r->method,'status'=>'pending'
-        ]);
-        return back()->with('success','Cashin request sent. Wait for approval');
-    }
-    public function cashout(Request $r) {
-        $r->validate(['amount'=>'required|numeric|min:100']);
-        if(auth()->user()->balance_points < $r->amount) return back()->with('error','Not enough points');
-        auth()->user()->decrement('balance_points',$r->amount);
-        Transaction::create([
-            'user_id'=>auth()->id(),'type'=>'cashout','amount_points'=>$r->amount,
-            'amount_peso'=>$r->amount/10,'method'=>$r->method,'status'=>'pending'
-        ]);
-        return back()->with('success','Cashout request sent');
-    }
-}
-          <?php namespace App\Http\Controllers; use App\Models\Bet; use App\Models\Transaction; use Illuminate\Http\Request;
-class BetController extends Controller {
-    public function place(Request $r) {
-        $r->validate(['live_id'=>'required','bet_on'=>'required','amount'=>'required|numeric|min:10']);
-        $user = auth()->user();
-        if($user->balance_points < $r->amount) return back()->with('error','Not enough points');
-        $user->decrement('balance_points',$r->amount);
-        Bet::create(['user_id'=>$user->id,'live_id'=>$r->live_id,'bet_on'=>$r->bet_on,'amount_points'=>$r->amount]);
-        Transaction::create(['user_id'=>$user->id,'type'=>'bet','amount_points'=>$r->amount,'status'=>'approved']);
-        return back()->with('success','Bet Placed: '.$r->bet_on);
-    }
-}
-   <?php use App\Http\Controllers\LiveController; use App\Http\Controllers\WalletController; use App\Http\Controllers\BetController;
-Route::get('/', [LiveController::class, 'index'])->name('home');
-  Route::middleware('auth')->group(function () {
-    Route::get('/wallet', [WalletController::class, 'wallet']);
-    Route::post('/wallet/cashin', [WalletController::class, 'cashin']);
-    Route::post('/wallet/cashout', [WalletController::class, 'cashout']);
-    Route::post('/bet', [BetController::class, 'place']);
-});
-Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::post('/live/start', [LiveController::class, 'start']);
-    Route::post('/live/end', [LiveController::class, 'end']);
-}); 
-<x-app-layout>
-<div class="p-4">
-    @if(session('success')) <div class="bg-green-200 p-2">{{session('success')}}</div> @endif
-    @if($live)
-        <h1 class="text-2xl font-bold">{{ $live->title }}</h1>
-        <div class="bg-black h-96 mb-4">ZEGO PLAYER HERE: Room ID {{ $live->room_id }}</div>
-        
-        <form action="/bet" method="POST" class="flex gap-2">
-            @csrf <input type="hidden" name="live_id" value="{{ $live->id }}">
-            <button name="bet_on" value="Pula" class="bg-red-500 text-white px-4 py-2">PULA 1.9x</button>
-            <button name="bet_on" value="Berde" class="bg-green-500 text-white px-4 py-2">BERDE 1.9x</button>
-            <button name="bet_on" value="Bughaw" class="bg-blue-500 text-white px-4 py-2">BUGHAW 1.9x</button>
-            <input type="number" name="amount" placeholder="Points" class="border px-2">
-            <button class="bg-gray-800 text-white px-4">TAYA</button>
-        </form>
-        <h2>Balance: {{ auth()->user()->balance_points }} pts</h2>
-    @else <h1>Walang Live Ngayon</h1> @endif
-    @if(auth()->user()->role == 'admin')
-    <hr class="my-4">
-    <form action="/admin/live/start" method="POST">
-        @csrf <input name="title" placeholder="Event Name" class="border">
-        <input name="room_id" placeholder="ZEGO Room ID" class="border">
-        <button class="bg-red-600 text-white px-4">START LIVE</button>
-    </form>
-    <form action="/admin/live/end" method="POST" class="mt-2">
-        @csrf <input type="hidden" name="live_id" value="{{ $live->id ?? '' }}">
-        <button name="winner" value="Pula">Declare PULA</button>
-        <button name="winner" value="Berde">Declare BERDE</button>
-    </form>
-    @endif
-</div>
-</x-app-layout> 
-<?php namespace App\Http\Controllers; 
-use App\Models\Transaction; // DAGDAG MO TO
-use Illuminate\Http\Request;
-class WalletController extends Controller {
-<x-app-layout>
-<div class="p-4">
-    <h1 class="text-2xl font-bold">Wallet: {{ auth()->user()->balance_points }} pts</h1>
-    <div class="flex gap-4 mt-2">
-        <form action="/wallet/cashin" method="POST" class="border p-3">
-            @csrf <h2>Cash In</h2>
-            <select name="method" class="border"><option>GCash</option><option>Maya</option><option>Bank</option></select>
-            <input type="number" name="amount" placeholder="Min 100 Peso" class="border p-1">
-            <button class="bg-green-600 text-white px-2">Request</button>
-        </form>
-        <form action="/wallet/cashout" method="POST" class="border p-3">
-            @csrf <h2>Cash Out</h2>
-            <select name="method" class="border"><option>GCash</option><option>Maya</option><option>Bank</option></select>
-            <input type="number" name="amount" placeholder="Min 100 Points" class="border p-1">
-            <button class="bg-red-600 text-white px-2">Request</button>
-        </form>
+    <input id="name" type="text" placeholder="Iyong pangalan">
+
+    <button class="join" onclick="joinCommunity()">
+      JOIN NOW
+    </button>
+  </div>
+
+  <div class="card" id="profile" style="display:none">
+    <h2>👤 My Profile</h2>
+    <p id="profileName"></p>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="card">
+    <h2>📢 Admin Announcement</h2>
+
+    <div class="post">
+      <b>👑 Admin</b>
+      <p>Welcome sa SABONG TAMBAYAN!</p>
+
+      <button class="react" onclick="react(this,'👍')">👍 <span>0</span></button>
+      <button class="react" onclick="react(this,'❤️')">❤️ <span>0</span></button>
+      <button class="react" onclick="react(this,'😆')">😆 <span>0</span></button>
     </div>
-    <h2 class="mt-4 font-bold">History</h2>
-    @foreach($tx as $t) 
-        <div class="border-b p-1">{{ $t->created_at }} - {{ $t->type }} - {{ $t->amount_points }} pts - {{ $t->status }}</div> 
-    @endforeach
+  </div>
+
+  <div class="card">
+    <h2>👥 Members</h2>
+    <div id="members">
+      <p class="small">Wala pang members.</p>
+    </div>
+  </div>
+
 </div>
-</x-app-layout>
+
+<script>
+let members = JSON.parse(localStorage.getItem("members") || "[]");
+
+function joinCommunity(){
+  const name = document.getElementById("name").value.trim();
+
+  if(!name){
+    alert("Ilagay muna ang pangalan mo.");
+    return;
+  }
+
+  members.push(name);
+  localStorage.setItem("members", JSON.stringify(members));
+
+  document.getElementById("profileName").innerHTML =
+    "Name: <b>" + escapeHTML(name) + "</b>";
+
+  document.getElementById("joinBox").style.display="none";
+  document.getElementById("profile").style.display="block";
+
+  showMembers();
+}
+
+function showMembers(){
+  const box=document.getElementById("members");
+
+  if(members.length===0){
+    box.innerHTML='<p class="small">Wala pang members.</p>';
+    return;
+  }
+
+  box.innerHTML=members.map((name,index)=>
+    "<p>👤 "+(index+1)+". "+escapeHTML(name)+"</p>"
+  ).join("");
+}
+
+function logout(){
+  document.getElementById("profile").style.display="none";
+  document.getElementById("joinBox").style.display="block";
+}
+
+function react(button,emoji){
+  const span=button.querySelector("span");
+  span.textContent=parseInt(span.textContent)+1;
+}
+
+function escapeHTML(text){
+  return text.replace(/[&<>"']/g,function(m){
+    return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[m];
+  });
+}
+
+showMembers();
+</script>
+
+</body>
+</html>
